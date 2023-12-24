@@ -1,0 +1,38 @@
+{
+	"folders": [
+		{
+			"name": "frontend",
+			"path": "../frontend"
+		},
+		{
+			"name": "backend",
+			"path": "../backend"
+		}
+	],
+	"settings": {
+		"workbench.colorCustomizations": {
+			"activityBar.activeBackground": "#4d9869",
+			"activityBar.background": "#4d9869",
+			"activityBar.foreground": "#e7e7e7",
+			"activityBar.inactiveForeground": "#e7e7e799",
+			"activityBarBadge.background": "#664b94",
+			"activityBarBadge.foreground": "#e7e7e7",
+			"commandCenter.border": "#e7e7e799",
+			"panel.border": "#4d9869",
+			"sash.hoverBorder": "#4d9869",
+			"statusBar.background": "#3c7652",
+			"statusBar.foreground": "#e7e7e7",
+			"statusBarItem.hoverBackground": "#4d9869",
+			"statusBarItem.remoteBackground": "#3c7652",
+			"statusBarItem.remoteForeground": "#e7e7e7",
+			"titleBar.activeBackground": "#3c7652",
+			"titleBar.activeForeground": "#e7e7e7",
+			"titleBar.inactiveBackground": "#3c765299",
+			"titleBar.inactiveForeground": "#e7e7e799"
+		},
+		"peacock.color": "#3c7652",
+
+		"eslint.workingDirectories": ["./frontend", "./backend"],
+		"i18n-ally.localesPaths": ["./frontend/locales"]
+	}
+}
