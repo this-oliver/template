@@ -1,0 +1,21 @@
+{
+  "name": "template",
+  "version": "0.0.0",
+  "description": "a template for web applications",
+  "repository": "this-oliverrr/template",
+  "author": "this-oliverrr <hello@oliverrr.net>",
+  "license": "MIT",
+  "keywords": [
+    "web",
+    "application",
+    "template",
+    "vue",
+    "nuxt",
+    "express",
+    "mongoose",
+    "mongodb"
+  ],
+  "scripts": {
+    "bump": "npx fist-bump"
+  }
+}

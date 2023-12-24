@@ -1,0 +1,48 @@
+# This workflow is a simple ci/cd pipeline that runs some tests and will deploy the
+# project
+
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+        pnpm-version: [8.x]
+        mongodb-version: ['7.0']
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    
+    - name: Check into server directory
+      run: cd server
+
+    - name: Install pnpm
+      run: npm install -g pnpm@${{ matrix.pnpm-version }}
+
+    - name: Install dependancies
+      run: pnpm install --frozen-lockfile --shamefully-hoist
+
+    - name: Start MongoDB
+      uses: supercharge/mongodb-github-action@1.10.0
+      with:
+        mongodb-version: ${{ matrix.mongodb-version }}
+      
+    - name: Run test
+      env:
+        DB_URI: mongodb://localhost:27017/test
+        JWT_SECRET: test-secret
+      run: pnpm test
