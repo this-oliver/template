@@ -9,8 +9,7 @@
     "lint": "eslint --ext .ts,.vue --ignore-path .gitignore .",
     "lint:fix": "eslint --ext .ts,.vue --ignore-path .gitignore --fix .",
     "docker:build": "docker build -t template-nuxt .",
-    "docker:run": "docker run -p 3000:3000 --env-file .env template-nuxt",
-    "bump": "npx fist-bump"
+    "docker:run": "docker run -p 3000:3000 --env-file .env template-nuxt"
   },
   "dependencies": {
     "@mdi/font": "^7.2.96",
