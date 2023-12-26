@@ -47,7 +47,7 @@ async function patchUser(req: Request, res: Response) {
   
 	const { id } = authReq.params;
 
-	if(authReq.user._id !== id){
+	if(authReq.user.id !== id){
 		return createErrorResponse(res, 'You are not authorized to perform this action.', 401);
 	}
 

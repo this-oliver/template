@@ -28,11 +28,15 @@ const form = reactive<AuthForm>({
 	passwordConfirmation: "",
 });
 
+const validUsername = computed<boolean>(() => form.username.length > 0);
+const validPassword = computed<boolean>(() => form.password.length > 0);
+const validPasswordConfirmation = computed<boolean>(() => form.passwordConfirmation !== undefined && form.passwordConfirmation.length > 0 && form.passwordConfirmation === form.password);
+
 const validForm = computed<boolean>(() => {
 	if (props.mode === 'login') {
-		return form.username.length > 0 && form.password.length > 0;
+		return validUsername.value === true && validPassword.value === true;
 	} else {
-		return form.username.length > 0 && form.password.length > 0 && form.password === form.passwordConfirmation;
+		return validUsername.value === true && validPasswordConfirmation.value === true;
 	}
 });
 

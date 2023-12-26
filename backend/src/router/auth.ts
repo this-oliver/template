@@ -20,6 +20,12 @@ const routes: Route[] = [
 		method: "post",
 		handler: [AuthMiddleware.refreshAccessToken],
 	},
+	{
+		path: `${BASE_PATH}/:id/password`,
+		method: "patch",
+		protected: true,
+		handler: [AuthMiddleware.patchUserPassword],
+	},
 ];
 
 export { routes };
