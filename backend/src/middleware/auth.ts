@@ -96,7 +96,7 @@ async function refreshAccessToken(req: Request, res: Response) {
 }
 
 /**
- * Updates a user's password
+ * Updates a user's password.
  */
 async function patchUserPassword(req:Request, res: Response) {
 	const authReq = req as AuthenticatedRequest;

@@ -29,10 +29,10 @@ export const useAuthStore = defineStore('auth', () => {
 	 * Set or unset (undefined) user in local storage.
 	 */
 	function _setUser(setUser: User | undefined){
-		if(user === undefined){
-			remove('user');
+		if(setUser === undefined){
+			remove(STORAGE_KEY_USER);
 		} else {
-			set('user', JSON.stringify(setUser));
+			set(STORAGE_KEY_USER, JSON.stringify(setUser));
 			user.value = setUser;
 		}
 	}
@@ -65,6 +65,8 @@ export const useAuthStore = defineStore('auth', () => {
 	 * if everything goes as planned.
 	 */
   async function register(username: string, password: string): Promise<User> {
+  	logout();
+    
   	const { data } = await post('/auth/register', { username, password });
 
   	const auth = data.value as Credentials | undefined;
@@ -73,6 +75,7 @@ export const useAuthStore = defineStore('auth', () => {
   		throw new Error('Invalid username or password.');
   	}
 
+  	_setUser(auth.user);
   	_setTokens(auth.accessToken, auth.refreshToken);
 		
   	return user.value as User;
@@ -83,6 +86,8 @@ export const useAuthStore = defineStore('auth', () => {
 	 * are valid.
 	 */
   async function login(username: string, password: string): Promise<User>{
+  	logout();
+    
   	const { data } = await post('/auth/login', { username, password });
 		
   	const auth = data.value as Credentials | undefined;
@@ -134,6 +139,23 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   /**
+	 * Updates user password.
+	 */
+  async function updateUserPassword (id: string, form: {oldPassword: string, newPassword: string}): Promise<User> {
+  	const { data } = await patch(`/auth/${id}/password`, form, { authorization: accessToken.value });
+    
+  	const updatedUser = data.value as User;
+
+  	if (!updatedUser) {
+  		throw new Error('Invalid user.');
+  	}
+
+  	_setUser(updatedUser);
+
+  	return user.value as User;
+  }
+
+  /**
 	 * Removes auth tokens.
 	 */
   function logout(): void {
@@ -141,28 +163,12 @@ export const useAuthStore = defineStore('auth', () => {
   	_setTokens(undefined, undefined);
   }
 
-  onMounted(() => {
-  	const localUser = get(STORAGE_KEY_USER);
-  	const localAccessToken = get(STORAGE_KEY_ACCESS);
-  	const localRefreshToken = get(STORAGE_KEY_REFRESH);
-
-  	function isNotEmptyString (value: string | null): boolean {
-  		return value !== null && value !== undefined && value !== 'undefined';
-  	}
-
-  	if (isNotEmptyString(localUser)) {
-  		user.value = JSON.parse(localUser as string);
-  	}
-
-  	if (isNotEmptyString(localAccessToken)) {
-  		accessToken.value = localAccessToken as string;
-  	}
-
-  	if (isNotEmptyString(localRefreshToken)) {
-  		refreshToken.value = localRefreshToken as string;
-  	}
-  });
-
+  function init(): void {
+  	user.value = get(STORAGE_KEY_USER) as User | undefined;
+  	accessToken.value = get(STORAGE_KEY_ACCESS) as string | undefined;
+  	refreshToken.value = get(STORAGE_KEY_REFRESH) as string | undefined;
+  }
+  
   return {
   	user,
   	accessToken,
@@ -171,6 +177,8 @@ export const useAuthStore = defineStore('auth', () => {
   	login,
   	refresh,
   	updateUser,
-  	logout
+  	updateUserPassword,
+  	logout,
+  	init
   };
 });

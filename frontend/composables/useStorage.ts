@@ -3,8 +3,18 @@ interface StorageOptions {
   cookie?: boolean;
 }
 
+// a robust function for inspecting if a string is a stringified object
+function _isStringifiedObject (value: string): boolean {
+	return (value.startsWith('{') && value.endsWith('}')) || (value.startsWith('[') && value.endsWith(']'));
+}
+
 export function useStorage () {
-	function set (key: string, value: string, options?: StorageOptions): boolean {
+	function set (key: string, value: string | object, options?: StorageOptions): boolean {
+		
+		if(typeof value !== 'string'){
+			value = JSON.stringify(value);
+		}
+    
 		try {
 			if (options?.server || options?.cookie || process.server) {
 				const cookie = useCookie(key);
@@ -19,7 +29,7 @@ export function useStorage () {
 		}
 	}
 
-	function get (key: string, options?: StorageOptions): string | null {
+	function get (key: string, options?: StorageOptions): string | object | null {
 		try {
 			let value = null;
 
@@ -28,6 +38,14 @@ export function useStorage () {
 				value = cookie.value as unknown as string | null;
 			} else {
 				value = localStorage.getItem(key);
+			}
+
+			if(!value || value === 'undefined' || value === 'null'){
+				return null;
+			}
+
+			if(_isStringifiedObject(value)){
+				value = JSON.parse(value);
 			}
 
 			return value;

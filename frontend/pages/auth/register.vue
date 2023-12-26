@@ -26,7 +26,7 @@ function goToDashboard() {
         >
           <AuthForm
             mode="register"
-            @register="goToDashboard()"
+            @registered="goToDashboard()"
           />
         </v-col>
 

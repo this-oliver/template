@@ -16,12 +16,13 @@ const authStore = useAuthStore();
 const { notify } = useNotification();
 
 // user with password confirmation and without _id
-type UserForm = Omit<User, 'password' | '_id'> & { password: string; passwordConfirmation: string;};
+type UserForm = Omit<User, 'password' | '_id'> & { password: string; passwordConfirmation: string; oldPassword: string};
 
 const form = reactive<UserForm>({
 	username: props.user?.username || '',
 	password: '',
-	passwordConfirmation: ''
+	passwordConfirmation: '',
+	oldPassword: ''
 });
 
 const validForm = computed<boolean>(() => {
@@ -33,7 +34,8 @@ const validForm = computed<boolean>(() => {
 	return (
 		form.username.length > 0 &&
     form.password.length > 0 &&
-    form.password === form.passwordConfirmation
+    form.password === form.passwordConfirmation &&
+    form.oldPassword.length > 0
 	);
 });
 
@@ -45,7 +47,7 @@ const options = computed<ActionItem[]>(() => {
 			color: validForm.value ? 'success' : undefined,
 			action: async () => {
 				try {
-					const user: User = await authStore.updateUser(props.user?._id, form);
+					const user: User = await updateUser();
 					emit('updated', user);
 				} catch (error) {
 					notify('User Error', (error as Error).message, 'error');
@@ -54,6 +56,26 @@ const options = computed<ActionItem[]>(() => {
 		}
 	];
 });
+
+async function updateUser(): Promise<User> {
+	let user: User | undefined;
+
+	// update username if it has changed
+	if (form.username !== props.user.username) {
+		user = await authStore.updateUser(props.user._id, { username: form.username });
+	}
+
+	// update password if it exists
+	else if (form.password.length > 0) {
+		user = await authStore.updateUserPassword(props.user._id, { oldPassword: form.oldPassword, newPassword: form.password });
+	}
+
+	if(!user) {
+		throw new Error('No changes were made');
+	}
+
+	return user;
+}
 </script>
 
 <template>
@@ -61,6 +83,11 @@ const options = computed<ActionItem[]>(() => {
     <InputText
       v-model="form.username"
       label="Username"
+    />
+    <InputText
+      v-model="form.oldPassword"
+      type="password"
+      label="Old Password"
     />
     <InputText
       v-model="form.password"
