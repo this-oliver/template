@@ -1,14 +1,13 @@
 import dotenv from "dotenv";
 
+// load base .env file
+dotenv.config();
+
+// load environment specific .env files
 if (process.env.NODE_ENV === "test") {
-	// get .env.test file
 	dotenv.config({ path: ".env.test" });
 } else if (process.env.NODE_ENV === "dev") {
-	// get .env.development file
 	dotenv.config({ path: ".env.dev" });
-} else {
-	// get .env file
-	dotenv.config();
 }
 
 // General config
