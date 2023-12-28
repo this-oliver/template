@@ -33,6 +33,13 @@ This directory contains [mongoose](https://mongoosejs.com) data models and assoc
 
 This directory contains middleware functions which are essentially request handlers (i.e. `function(req, res, next)`) that can be used in routes. These functions are not bundled with routes because they can be reused in multiple routes and are easier to test in isolation.
 
+All middleware try to follow a similar response structure. Let's say that there is a user middleware:
+
+- if you request a single user (i.e. `GET /users/123`), then you get a user object as a response.
+- if you create, update or delete a user (i.e. `POST /user` or `DELETE /user/123`), then you get a user object as a response.
+- if you request a list of users (i.e. `GET /users`), then you get an array of user objects as a response.
+- if an error occurs, you get an object with a message property (i.e. `{message: 'user with id 123 doesn't exist'}`).
+
 ### `router/`
 
 This directory contains route definitions for application resources (e.g. `POST /users`).

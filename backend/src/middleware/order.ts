@@ -11,7 +11,7 @@ async function postOrder(req: Request, res: Response) {
 		const order = await OrderData.createOrder(body);
 		return res.status(201).send(order);
 	} catch (error) {
-		return res.status(400).send((error as Error).message);
+		return res.status(400).send({ message: (error as Error).message });
 	}
 }
 
@@ -22,7 +22,7 @@ async function getOrderById(req: Request, res: Response) {
 		const order = await OrderData.getOrderById(id);
 		return res.status(200).send(order);
 	} catch (error) {
-		return res.status(400).send((error as Error).message);
+		return res.status(400).send({ message: (error as Error).message });
 	}
 }
 
@@ -31,7 +31,7 @@ async function indexOrders(req: Request, res: Response) {
 		const orders = await OrderData.indexOrders();
 		return res.status(200).send(orders);
 	} catch (error) {
-		return res.status(400).send((error as Error).message);
+		return res.status(400).send({ message: (error as Error).message });
 	}
 }
 
@@ -42,7 +42,7 @@ async function indexOrdersByShop(req: Request, res: Response) {
 		const orders = await OrderData.indexOrdersByShop(id);
 		return res.status(200).send(orders);
 	} catch (error) {
-		return res.status(400).send((error as Error).message);
+		return res.status(400).send({ message: (error as Error).message });
 	}
 }
 
@@ -53,7 +53,7 @@ async function indexOrdersByUser(req: Request, res: Response) {
 		const orders = await OrderData.indexOrdersByUser(id);
 		return res.status(200).send(orders);
 	} catch (error) {
-		return res.status(400).send((error as Error).message);
+		return res.status(400).send({ message: (error as Error).message });
 	}
 }
 
@@ -69,7 +69,7 @@ async function patchOrder(req: Request, res: Response) {
 		const order = await OrderData.updateOrder(id, req.body);
 		return res.status(200).send(order);
 	} catch (error) {
-		return res.status(400).send((error as Error).message);
+		return res.status(400).send({ message: (error as Error).message });
 	}
 }
 

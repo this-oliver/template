@@ -80,11 +80,6 @@ function _buildInterceptor(){
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		onRequestError(context: any){
 			throw new Error(context.error.message);
-		},
-		// Handle the response errors
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		async onResponseError(context: any){
-			throw context._data;
 		}
 	};
 }
