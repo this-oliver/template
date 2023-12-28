@@ -13,34 +13,52 @@ const useShopStore = defineStore('shop', () => {
 	const getShopDescription = computed(() => shop.value?.description ?? '');
 
 	async function createShop(shop: Shop): Promise<Shop> {
-		const { data } = await post('/shops', shop, { authorization: authStore.accessToken });
+		const { data, error } = await post('/shops', shop, { authorization: authStore.accessToken });
+
+		if(error.value){
+  		throw new Error(error.value?.data.message || 'Failed to create shop.');
+  	}
+
 		return data.value as Shop;
 	}
 
 	async function getShop(id: string): Promise<Shop> {
-		const { data } = await get(`/shops/${id}`);
+		const { data, error } = await get(`/shops/${id}`);
+
+		if(error.value){
+  		throw new Error(error.value?.data.message || 'Failed to get shop.');
+  	}
+
 		return data.value as Shop;
 	}
 
 	async function indexShops(): Promise<Shop[]> {
-		const { data } = await get('/shops');
+		const { data, error } = await get('/shops');
+
+		if(error.value){
+  		throw new Error(error.value?.data.message || 'Failed to fetch shops.');
+  	}
 		
-		const fetchedShops = data.value as Shop[];
-    
-		if(fetchedShops.length > 0){
-			shop.value = (data.value as Shop[])[0];
-		}
-    
-		return fetchedShops;
+		return data.value as Shop[];
 	}
 
 	async function updateShop(id:string, patchedShop: Partial<Shop>): Promise<Shop> {
-		const { data } = await patch(`/shops/${id}`, patchedShop, { authorization: authStore.accessToken });
+		const { data, error } = await patch(`/shops/${id}`, patchedShop, { authorization: authStore.accessToken });
+
+		if(error.value){
+  		throw new Error(error.value?.data.message || `Failed to update shop with id ${id}`);
+  	}
+    
 		return data.value as Shop;
 	}
 
 	async function deleteShop(id:string): Promise<Shop> {
-		const { data } = await remove(`/shops/${id}`);
+		const { data, error } = await remove(`/shops/${id}`);
+		
+		if(error.value){
+  		throw new Error(error.value?.data.message || `Failed to delete shop with id ${id}`);
+  	}
+    
 		return data.value as Shop;
 	}
 
@@ -63,29 +81,54 @@ const useProductStore = defineStore('product', () => {
 	const products = ref<Product[]>([]);
 
 	async function createProduct(product:Product): Promise<Product> {
-		const { data } = await post('/products', product, { authorization: authStore.accessToken });
+		const { data, error } = await post('/products', product, { authorization: authStore.accessToken });
+
+		if(error.value){
+  		throw new Error(error.value?.data.message || `Failed to create product`);
+  	}
+    
 		return data.value as Product;
 	}
 
 	async function getProduct(id: string): Promise<Product> {
-		const { data } = await get(`/products/${id}`);
+		const { data, error } = await get(`/products/${id}`);
+
+		if(error.value){
+  		throw new Error(error.value?.data.message || `Failed to get product with id ${id}`);
+  	}
+    
 		return data.value as Product;
 	}
 
 	async function indexProducts(): Promise<Product[]> {
-		const { data } = await get('/products');
+		const { data, error } = await get('/products');
+		
+		if(error.value){
+  		throw new Error(error.value?.data.message || `Failed to fetch products`);
+  	}
+    
 		products.value = data.value as Product[];
     
 		return products.value;
 	}
 
 	async function updateProduct(id:string, patchedProduct: Partial<Product>): Promise<Product> {
-		const { data } = await patch(`/products/${id}`, patchedProduct, { authorization: authStore.accessToken });
+		const { data, error } = await patch(`/products/${id}`, patchedProduct, { authorization: authStore.accessToken });
+
+		if(error.value){
+  		throw new Error(error.value?.data.message || `Failed to update product with id ${id}`);
+  	}
+    
 		return data.value as Product;
 	}
 
 	async function deleteProduct(id:string): Promise<Product> {
-		const { data } = await remove(`/products/${id}`);
+		const { data, error } = await remove(`/products/${id}`);
+
+		if(error.value){
+  		throw new Error(error.value?.data.message || `Failed to delete product with id ${id}`);
+  	}
+
 		return data.value as Product;
 	}
 
@@ -106,29 +149,54 @@ const useOrderStore = defineStore('order', () => {
 	const orders = ref<Order[]>([]);
 
 	async function createOrder(order:Order): Promise<Order> {
-		const { data } = await post('/orders', order);
+		const { data, error } = await post('/orders', order);
+
+		if(error.value){
+  		throw new Error(error.value?.data.message || `Failed to create order`);
+  	}
+
 		return data.value as Order;
 	}
 
 	async function getOrder(id: string): Promise<Order> {
-		const { data } = await get(`/orders/${id}`);
+		const { data, error } = await get(`/orders/${id}`);
+
+		if(error.value){
+  		throw new Error(error.value?.data.message || `Failed to get order with id ${id}`);
+  	}
+
 		return data.value as Order;
 	}
 
 	async function indexOrders(): Promise<Order[]> {
-		const { data } = await get('/orders');
+		const { data, error } = await get('/orders');
+
+		if(error.value){
+  		throw new Error(error.value?.data.message || `Failed to fetch orders`);
+  	}
+
 		orders.value = data.value as Order[];
     
 		return orders.value;
 	}
 
 	async function updateOrder(id:string, patchedOrder: Partial<Order>): Promise<Order> {
-		const { data } = await patch(`/orders/${id}`, patchedOrder, { authorization: authStore.accessToken });
+		const { data, error } = await patch(`/orders/${id}`, patchedOrder, { authorization: authStore.accessToken });
+
+		if(error.value){
+  		throw new Error(error.value?.data.message || `Failed to update order with id ${id}`);
+  	}
+
 		return data.value as Order;
 	}
 
 	async function deleteOrder(id:string): Promise<Order> {
-		const { data } = await remove(`/orders/${id}`);
+		const { data, error } = await remove(`/orders/${id}`);
+
+		if(error.value){
+  		throw new Error(error.value?.data.message || `Failed to delete order with id ${id}`);
+  	}
+
 		return data.value as Order;
 	}
 

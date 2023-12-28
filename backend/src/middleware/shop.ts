@@ -16,7 +16,7 @@ async function postShop(req: Request, res: Response) {
 		const shop = await ShopData.createShop(body);
 		return res.status(201).send(shop);
 	} catch (error) {
-		return res.status(400).send((error as Error).message);
+		return res.status(400).send({ message: (error as Error).message });
 	}
 }
 
@@ -27,7 +27,7 @@ async function getShopById(req: Request, res: Response) {
 		const shop = await ShopData.getShopById(id);
 		return res.status(200).send(shop);
 	} catch (error) {
-		return res.status(400).send((error as Error).message);
+		return res.status(400).send({ message: (error as Error).message });
 	}
 }
 
@@ -36,7 +36,7 @@ async function indexShops(req: Request, res: Response) {
 		const shops = await ShopData.indexShops();
 		return res.status(200).send(shops);
 	} catch (error) {
-		return res.status(400).send((error as Error).message);
+		return res.status(400).send({ message: (error as Error).message });
 	}
 }
 
@@ -47,7 +47,7 @@ async function indexShopsByOwner(req: Request, res: Response) {
 		const shops = await ShopData.indexShopsByOwner(owner);
 		return res.status(200).send(shops);
 	} catch (error) {
-		return res.status(400).send((error as Error).message);
+		return res.status(400).send({ message: (error as Error).message });
 	}
 }
 
@@ -63,7 +63,7 @@ async function patchShop(req: Request, res: Response) {
 		const shop = await ShopData.updateShop(id, authReq.body);
 		return res.status(200).send(shop);
 	} catch (error) {
-		return res.status(400).send((error as Error).message);
+		return res.status(400).send({ message: (error as Error).message });
 	}
 }
 
@@ -79,7 +79,7 @@ async function deleteShop(req: Request, res: Response) {
 		const shop = await ShopData.deleteShop(id);
 		return res.status(200).send(shop);
 	} catch (error) {
-		return res.status(400).send((error as Error).message);
+		return res.status(400).send({ message: (error as Error).message });
 	}
 }
 
