@@ -21,7 +21,7 @@ function getOptionColor (option: ActionItem): string {
     <v-sheet>
       <v-toolbar color="transparent">
         <base-btn
-          large
+          size="large"
           @click="drawer.visible = false"
         >
           <v-icon size="x-large">

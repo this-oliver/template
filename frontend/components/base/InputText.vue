@@ -75,7 +75,7 @@ watch(
   >
     <template #append-inner>
       <base-btn
-        small
+        size="small"
         color="grey"
         :hide-from-tab="true"
         @click="data.showPassword = !data.showPassword"
