@@ -14,14 +14,6 @@ const useNavigationStore = defineStore('navigation', () => {
 			}
 		];
 
-		const protectedRoutes: ActionItem[] = [
-			{
-				label: 'start',
-				color: 'success',
-				to: '/start'
-			}
-		];
-
 		const authRoutes: ActionItem[] = [
 			{
 				label: 'login',
@@ -32,7 +24,7 @@ const useNavigationStore = defineStore('navigation', () => {
 		];
 
 		return authStore.isAuthenticated 
-			? [...base, ...protectedRoutes] 
+			? [...base] 
 			: [...base, ...authRoutes];
 	});
 
