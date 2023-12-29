@@ -22,22 +22,16 @@ const useShopStore = defineStore('shop', () => {
 		return data.value as Shop;
 	}
 
-	async function getShop(id: string): Promise<Shop> {
-		const { data, error } = await get(`/shops/${id}`);
-
-		if(error.value){
-  		throw new Error(error.value?.data.message || 'Failed to get shop.');
-  	}
-
-		return data.value as Shop;
-	}
-
 	async function indexShops(): Promise<Shop[]> {
 		const { data, error } = await get('/shops');
 
 		if(error.value){
   		throw new Error(error.value?.data.message || 'Failed to fetch shops.');
   	}
+
+		if(data.value === null){
+			return [];
+		}
 		
 		return data.value as Shop[];
 	}
@@ -62,15 +56,32 @@ const useShopStore = defineStore('shop', () => {
 		return data.value as Shop;
 	}
 
+	async function init(): Promise<void> {
+		// return shop if it exists
+		if(shop.value){
+			return;
+		}
+    
+		const shops = await indexShops();
+
+		// return undefined if no shops exists
+		if(shops.length === 0){
+			throw new Error('No shops exists.');
+		}
+    
+		// set shop and return it
+		shop.value = shops[0];
+	}
+
 	return {
 		shop,
 		getShopName,
 		getShopDescription,
 		createShop,
-		getShop,
 		indexShops,
 		updateShop,
-		deleteShop
+		deleteShop,
+		init
 	};
 });
 
