@@ -27,7 +27,7 @@ function goToDashboard() {
         >
           <AuthForm
             mode="login"
-            @login="goToDashboard()"
+            @authenticated="goToDashboard()"
           />
         </v-col>
 
