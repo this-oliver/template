@@ -151,7 +151,7 @@ const editOptions = computed<EditOption[]>(() => {
 // watch for changes to the prop value and update the editor
 watch(
 	() => props.modelValue,
-	(value: string) => {
+	(value: string | undefined) => {
 		if (!value) {
 			return;
 		}
@@ -185,7 +185,7 @@ watch(
       v-for="option in editOptions"
       :key="option.name"
       :class="{ 'is-active': option.active, 'ma-1': true }"
-      small
+      size="small"
       outlined
       :disabled="option.disabled"
       @click="option.action"

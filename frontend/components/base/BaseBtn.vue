@@ -1,5 +1,9 @@
 <script setup lang="ts">
 
+import type { PropType } from 'vue';
+
+type ButtonSize = 'small' | 'medium' | 'large'
+
 const props = defineProps({
 	color: {
 		type: String,
@@ -9,13 +13,9 @@ const props = defineProps({
 		type: Boolean, 
 		default: undefined 
 	},
-	small: { 
-		type: Boolean, 
-		default: undefined 
-	},
-	large: { 
-		type: Boolean, 
-		default: undefined 
+	size: {
+		type: String as PropType<ButtonSize>,
+		default: undefined
 	},
 	flat: { 
 		type: Boolean, 
@@ -72,17 +72,6 @@ const getButtonStyle = computed<ButtonStyle | undefined>(() => {
 	}
 });
 
-type ButtonSize = 'small' | 'medium' | 'large'
-const getButtonSize = computed<ButtonSize>(() => {
-	if (props.small) {
-		return 'small';
-	} else if (props.large) {
-		return 'large';
-	} else {
-		return 'medium';
-	}
-});
-
 function handleClick() {
 	// emit click event
 	emit('click');
@@ -93,7 +82,7 @@ function handleClick() {
   <v-btn
     :variant="getButtonStyle"
     :color="props.color"
-    :size="getButtonSize"
+    :size="props.size"
     :block="props.block"
     :rounded="props.rounded"
     :disabled="props.disabled"
