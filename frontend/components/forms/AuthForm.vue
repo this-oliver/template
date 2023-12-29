@@ -17,7 +17,7 @@ const props = defineProps({
 	}
 });
 
-const emit = defineEmits(['login', 'register']);
+const emit = defineEmits(['authenticated']);
 
 const { notify } = useNotification();
 const { login, register } = useAuthStore();
@@ -42,12 +42,15 @@ const validForm = computed<boolean>(() => {
 
 async function authenticate(){
 	try {
+		let user: User;
 		if (props.mode === 'login') {
-			const user: User = await login(form.username, form.password);
-			emit('login', user);
+			user = await login(form.username, form.password);
 		} else {
-			const user: User = await register(form.username, form.password);
-			emit('register', user);
+			user = await register(form.username, form.password);
+		}
+
+		if (user) {
+			emit('authenticated', user);
 		}
 	} catch (error) {
 		notify('Authentication', (error as Error).message, 'error'); 
