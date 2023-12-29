@@ -29,19 +29,26 @@ export function useStorage () {
 		}
 	}
 
-	function get (key: string, options?: StorageOptions): string | object | null {
+	function get (key: string, options?: StorageOptions): string | object | undefined {
 		try {
-			let value = null;
+			let value = undefined;
 
 			if (options?.server || options?.cookie || process.server) {
 				const cookie = useCookie(key);
-				value = cookie.value as unknown as string | null;
+				value = cookie.value as unknown as string | null | undefined;
 			} else {
 				value = localStorage.getItem(key);
 			}
 
-			if(!value || value === 'undefined' || value === 'null'){
-				return null;
+			if(
+				!value || 
+        value === '' || 
+        value === 'undefined' || 
+        value === undefined || 
+        value === 'null' || 
+        value === null
+			){
+				return undefined;
 			}
 
 			if(_isStringifiedObject(value)){
@@ -50,7 +57,7 @@ export function useStorage () {
 
 			return value;
 		} catch (error) {
-			return null;
+			return undefined;
 		}
 	}
 
@@ -58,7 +65,7 @@ export function useStorage () {
 		try {
 			if (options?.server || options?.cookie || process.server) {
 				const cookie = useCookie(key);
-				cookie.value = null;
+				cookie.value = undefined;
 			} else {
 				localStorage.removeItem(key);
 			}
