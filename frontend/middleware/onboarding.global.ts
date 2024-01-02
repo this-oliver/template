@@ -15,7 +15,7 @@ export default defineNuxtRouteMiddleware((to) => {
 	}
 
 	// do nothing in shop onboarding
-	if(to.path.includes('/shops/create')){
+	if(to.path.includes('/shop/create')){
 		return;
 	}
 

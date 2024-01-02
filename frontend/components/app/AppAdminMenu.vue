@@ -24,6 +24,9 @@ const authStore = useAuthStore();
       <v-list-item to="/profile">
         <v-list-item-title>Profile</v-list-item-title>
       </v-list-item>
+      <v-list-item to="/shop/edit">
+        <v-list-item-title>Shop</v-list-item-title>
+      </v-list-item>
       <v-list-item
         class="text-error"
         @click="authStore.logout()"

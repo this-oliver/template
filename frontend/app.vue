@@ -5,6 +5,8 @@ import { useShopStore } from './stores/shop';
 const title = ref<string>('Nuxt Template');
 const description = ref<string>('A Nuxt template for quickly starting a new project');
 
+const authStore = useAuthStore();
+const shopStore = useShopStore();
 const { notify } = useNotification();
 
 useSeoMeta({
@@ -16,8 +18,16 @@ useSeoMeta({
 
 onMounted(async () => {
 	try {
-		useAuthStore().init();
-		await useShopStore().init();
+		authStore.init();
+		await shopStore.init();
+
+		useSeoMeta({
+			title: shopStore.shop?.name,
+			ogTitle: shopStore.shop?.name,
+			description: shopStore.shop?.description,
+			ogDescription: shopStore.shop?.description
+		});
+
 	} catch (error) {
 		notify('Setup Error', (error as Error).message, 'error');
 	}

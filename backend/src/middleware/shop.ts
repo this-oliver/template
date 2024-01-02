@@ -7,10 +7,9 @@ import type { Request, Response } from 'express';
 async function postShop(req: Request, res: Response) {
 	const authReq = req as AuthenticatedRequest;
 	const body = req.body as Shop;
-
-	if(authReq.user._id !== body.owner){
-		return res.status(401).send('You are not allowed to create a shop for another user.');
-	}
+	
+	// set auth user as shop owner
+	body.owner = authReq.user.id;
   
 	try {
 		const shop = await ShopData.createShop(body);
