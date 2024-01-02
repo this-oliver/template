@@ -12,14 +12,16 @@ const useShopStore = defineStore('shop', () => {
 	const getShopName = computed(() => shop.value?.name ?? '');
 	const getShopDescription = computed(() => shop.value?.description ?? '');
 
-	async function createShop(shop: Shop): Promise<Shop> {
-		const { data, error } = await post('/shops', shop, { authorization: authStore.accessToken });
+	async function createShop(newShop: Partial<Shop>): Promise<Shop> {
+		const { data, error } = await post('/shops', newShop, { authorization: authStore.accessToken });
 
 		if(error.value){
   		throw new Error(error.value?.data.message || 'Failed to create shop.');
   	}
 
-		return data.value as Shop;
+		shop.value = data.value as Shop;
+
+		return shop.value;
 	}
 
 	async function indexShops(): Promise<Shop[]> {
@@ -29,7 +31,7 @@ const useShopStore = defineStore('shop', () => {
   		throw new Error(error.value?.data.message || 'Failed to fetch shops.');
   	}
 
-		if(data.value === null){
+		if(!data.value){
 			return [];
 		}
 		
@@ -43,7 +45,9 @@ const useShopStore = defineStore('shop', () => {
   		throw new Error(error.value?.data.message || `Failed to update shop with id ${id}`);
   	}
     
-		return data.value as Shop;
+		shop.value = data.value as Shop;
+
+		return shop.value;
 	}
 
 	async function deleteShop(id:string): Promise<Shop> {
@@ -72,6 +76,8 @@ const useShopStore = defineStore('shop', () => {
 		// set shop and return it
 		shop.value = shops[0];
 	}
+
+	init();
 
 	return {
 		shop,

@@ -6,7 +6,8 @@ const shopStore = useShopStore();
 
 <template>
   <span>
-    <h2>{{ shopStore.getShopName }} <small>(📓 Nuxt Template)</small></h2>
+    <h2 v-if="shopStore.shop">{{ shopStore.getShopName }}</h2>
+    <h2 v-else>Nuxt Template</h2>
   </span>
 </template>
 
