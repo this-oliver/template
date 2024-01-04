@@ -13,7 +13,7 @@ const UserModel = Mongoose.model("user", new Mongoose.Schema<IUser>(
 		password: { type: String, required: true }
 	},
 	{ timestamps: true })
-	.pre("save", async function(next) {
+	.pre("save", function(next) {
 		if(this.isModified("password")) {
 			const hash: string = hashPassword(this.password);
 			this.password = hash;

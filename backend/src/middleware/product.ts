@@ -1,5 +1,5 @@
 import * as ProductData from '../data/product';
-import { verifyShopOwner } from './helpers/authorization';
+import { verifyShopOwner, verifyProductOwner } from './helpers/authorization';
 import type { Product } from '../types/logic';
 import type { AuthenticatedRequest } from '../types/infrastructure';
 import type { Request, Response } from 'express';
@@ -55,7 +55,7 @@ async function patchProduct(req: Request, res: Response) {
 	const authReq = req as AuthenticatedRequest;
 	const { id } = authReq.params;
 
-	if(!await verifyShopOwner(authReq.user._id, id)){
+	if(!await verifyProductOwner(authReq.user.id, id)){
 		return res.status(401).send({ message: 'You are not allowed to update a product that you do not own.' });
 	}
 
@@ -71,7 +71,7 @@ async function deleteProduct(req: Request, res: Response) {
 	const authReq = req as AuthenticatedRequest;
 	const { id } = authReq.params;
 
-	if(!await verifyShopOwner(authReq.user._id, id)){
+	if(!await verifyProductOwner(authReq.user.id, id)){
 		return res.status(401).send({ message: 'You are not allowed to delete a product that you do not own.' });
 	}
 

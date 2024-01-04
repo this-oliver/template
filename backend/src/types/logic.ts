@@ -22,6 +22,7 @@ export interface Product {
   price: number;
   quantity: number;
   images: Image[];
+  slug: string;
 }
 
 export interface Shop {

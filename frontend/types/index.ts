@@ -19,6 +19,7 @@ export interface Product extends Document {
   price: number;
   quantity: number;
   images: Image[];
+  slug: string;
 }
 
 export interface Shop extends Document {

@@ -94,15 +94,25 @@ const useShopStore = defineStore('shop', () => {
 const useProductStore = defineStore('product', () => {
 	const { post, get, patch, remove } = useRequest();
 	const authStore = useAuthStore();
+	const shopStore = useShopStore();
 
 	const products = ref<Product[]>([]);
 
-	async function createProduct(product:Product): Promise<Product> {
+	async function createProduct(product:Partial<Product>): Promise<Product> {
+		if(!shopStore.shop){
+			throw new Error('No shop exists to create product');
+		}
+    
+		product.shop = shopStore.shop._id;
+    
 		const { data, error } = await post('/products', product, { authorization: authStore.accessToken });
 
 		if(error.value){
   		throw new Error(error.value?.data.message || `Failed to create product`);
   	}
+
+		// add to products
+		products.value.push(data.value as Product);
     
 		return data.value as Product;
 	}
@@ -135,18 +145,30 @@ const useProductStore = defineStore('product', () => {
 		if(error.value){
   		throw new Error(error.value?.data.message || `Failed to update product with id ${id}`);
   	}
+
+		// update products
+		const index = products.value.findIndex((product) => product._id === id);
+		products.value[index] = data.value as Product;
     
 		return data.value as Product;
 	}
 
 	async function deleteProduct(id:string): Promise<Product> {
-		const { data, error } = await remove(`/products/${id}`);
+		const { data, error } = await remove(`/products/${id}`, { authorization: authStore.accessToken });
 
 		if(error.value){
   		throw new Error(error.value?.data.message || `Failed to delete product with id ${id}`);
   	}
 
+		// remove from products
+		const index = products.value.findIndex((product) => product._id === id);
+		products.value.splice(index, 1);
+
 		return data.value as Product;
+	}
+
+	async function init(): Promise<void> {
+		products.value = await indexProducts();
 	}
 
 	return {
@@ -155,7 +177,8 @@ const useProductStore = defineStore('product', () => {
 		getProduct,
 		indexProducts,
 		updateProduct,
-		deleteProduct
+		deleteProduct,
+		init
 	};
 });
 
@@ -165,7 +188,7 @@ const useOrderStore = defineStore('order', () => {
 
 	const orders = ref<Order[]>([]);
 
-	async function createOrder(order:Order): Promise<Order> {
+	async function createOrder(order:Partial<Order>): Promise<Order> {
 		const { data, error } = await post('/orders', order);
 
 		if(error.value){

@@ -1,5 +1,6 @@
 import Mongoose from "mongoose";
 import { Schema } from "mongoose";
+import { createSlug } from "../utils/slug";
 import type { Product as IProduct } from "../types/logic";
 
 type ProductDocument = IProduct & Mongoose.Document;
@@ -11,20 +12,30 @@ const ProductModel = Mongoose.model("product", new Mongoose.Schema<ProductDocume
 		description: { type: String, default: "" },
 		price: { type: Number, required: true },
 		quantity: { type: Number, required: true },
+		slug: { type: String, default: "" },
 		images: [{
 			url: { type: String, required: true },
 			alt: { type: String, required: true }
 		}]
 	},
-	{ timestamps: true }
-));
+	{ timestamps: true })
+	.pre("save", function(next) {
+		this.slug = createSlug(this.name);
+		next();
+	})
+);
 
 async function createProduct(product: IProduct): Promise<ProductDocument> {
 	return await ProductModel.create(new ProductModel(product));
 }
 
 async function getProductById(id: string): Promise<ProductDocument | null> {
-	return await ProductModel.findById(id).exec();
+	// could be either an id or a slug
+	const isObjectId = Mongoose.isValidObjectId(id);
+  
+	return isObjectId
+		? await ProductModel.findById(id).exec()
+		: await ProductModel.findOne({ slug: id }).exec();
 }
 
 async function indexProducts(): Promise<ProductDocument[]> {

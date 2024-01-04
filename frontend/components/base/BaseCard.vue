@@ -117,6 +117,7 @@ const getActions = computed<ActionItem[]>(() => {
             :outlined="item.outlined"
             :loading="props.loading"
             :disabled="item.disabled"
+            :to="item.to"
             @click="item.action"
           >
             {{ item.label }}
