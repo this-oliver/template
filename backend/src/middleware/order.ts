@@ -1,5 +1,5 @@
 import * as OrderData from '../data/order';
-import { verifyShopOwner } from './helpers/authorization';
+import { verifyOrderOwner } from './helpers/authorization';
 import type { Order } from '../types/logic';
 import type { AuthenticatedRequest } from '../types/infrastructure';
 import type { Request, Response } from 'express';
@@ -61,7 +61,7 @@ async function patchOrder(req: Request, res: Response) {
 	const authReq = req as AuthenticatedRequest;
 	const { id } = authReq.params;
 
-	if(!await verifyShopOwner(authReq.user._id, id)){
+	if(!await verifyOrderOwner(authReq.user._id, id)){
 		return res.status(401).send('You are not allowed to update an order that you do not own.');
 	}
 

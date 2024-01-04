@@ -9,15 +9,17 @@ const useNavigationStore = defineStore('navigation', () => {
 		const base: ActionItem[] = [
 			{
 				label: 'features',
-				icon: 'mdi-view-dashboard-outline',
 				to: '/features'
+			},
+			{
+				label: 'products',
+				to: '/products'
 			}
 		];
 
-		const authRoutes: ActionItem[] = [
+		const publicRoutes: ActionItem[] = [
 			{
 				label: 'login',
-				icon: 'mdi-login',
 				color: 'primary',
 				to: '/auth/login',
 			}
@@ -25,7 +27,7 @@ const useNavigationStore = defineStore('navigation', () => {
 
 		return authStore.isAuthenticated 
 			? [...base] 
-			: [...base, ...authRoutes];
+			: [...base, ...publicRoutes];
 	});
 
 	return { options };

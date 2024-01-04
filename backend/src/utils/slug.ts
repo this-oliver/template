@@ -8,7 +8,7 @@
  * 
  * @param {string} sample - text to be converted to slug
  */
-function createSlug(sample: string): string{
+function createSlug(sample: string): string {
 	
 	if(sample.trim().length === 0){
 		throw new Error('sample string required');
