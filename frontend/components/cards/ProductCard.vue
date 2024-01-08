@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useProductStore } from '~/stores/shop';
+import { useProductStore, useOrderStore } from '~/stores/shop';
 import type { Product } from '~/types';
 import type { ActionItem } from '~/components/base/BaseCard.vue';
 
@@ -15,6 +15,17 @@ const props = defineProps({
 });
 
 const productStore = useProductStore();
+const orderStore = useOrderStore();
+
+const cartCount = computed<number>(()=> {
+	const index = orderStore.cart.findIndex((item) => item.product._id === props.product._id);
+
+	if(index < 0){
+		return 0;
+	} else {
+		return orderStore.cart[index].quantity;
+	}
+});
 
 const quantity = computed<string>(() => {
 	return props.product.quantity > 0 
@@ -23,20 +34,37 @@ const quantity = computed<string>(() => {
 });
 
 const options = computed<ActionItem[]>(() => {
+	const baseOptions: ActionItem[] = [
+		{
+			label: 'Add',
+			color: 'success',
+			disabled: props.product.quantity === 0,
+			action: () => orderStore.addToCart(props.product)
+		},
+		{
+			label: 'Remove',
+			color: 'grey',
+			disabled: cartCount.value === 0,
+			action: () => orderStore.removeFromCart(props.product)
+		}
+	];
+
+	const adminOptions: ActionItem[] = [
+		{
+			label: 'Edit',
+			color: 'warning',
+			to: `/products/${props.product.slug}/edit`
+		},
+		{
+			label: 'Delete',
+			color: 'error',
+			action: () => productStore.deleteProduct(props.product._id)
+		}
+	];
+
 	return props.admin
-		? [
-			{
-				label: 'Edit',
-				color: 'warning',
-				to: `/products/${props.product.slug}/edit`
-			},
-			{
-				label: 'Delete',
-				color: 'error',
-				action: () => productStore.deleteProduct(props.product._id)
-			}
-		]
-		: [];
+		? [...baseOptions, ...adminOptions]
+		: baseOptions;
 });
 
 type Image = { src: string; alt: string };
@@ -70,5 +98,9 @@ const thumbnail = computed<Image>(() => {
     <v-card-subtitle>
       {{ props.product.price }} <small>{{ productStore.currency }}</small>
     </v-card-subtitle>
+    
+    <v-card-text v-if="cartCount > 0">
+      ({{ cartCount }})
+    </v-card-text>
   </base-card>
 </template>
