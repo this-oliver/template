@@ -31,6 +31,10 @@ const props = defineProps({
 	color: {
 		type: String,
 		default: undefined
+	},
+	disabled: {
+		type: Boolean,
+		default: false
 	}
 });
 
@@ -70,6 +74,7 @@ watch(
     :placeholder="placeHolder"
     :type="data.showPassword ? 'text' : 'password'"
     :outlined="outlined"
+    :disabled="disabled"
     :success="isValid === true"
     :error="isValid === false"
   >
@@ -93,6 +98,7 @@ watch(
     :placeholder="placeHolder"
     :type="type"
     :outlined="outlined"
+    :disabled="disabled"
     :success="isValid === true"
     :error="isValid === false"
   />

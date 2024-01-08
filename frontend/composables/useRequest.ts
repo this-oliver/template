@@ -54,16 +54,20 @@ function _buildConfig(options?: FetchConfig): RequestInit {
 	}
 
 	if (options?.authorization) {
-        config.headers!['Authorization' as keyof HeadersInit] = `Bearer ${options.authorization}`;
+    config.headers!['Authorization' as keyof HeadersInit] = `Bearer ${options.authorization}`;
 	}
 
 	return config;
 }
 
 /**
- * returns a stringyfied object
+ * returns a stringyfied object. if a body is a formdata object, it will return the formdata object
  */
-function _buildBody(body: object | string): string {
+function _buildBody(body: object | string): string | FormData {
+	if(body instanceof FormData){
+		return body;
+	}
+  
 	if(typeof body === 'string'){
 		return body;
 	}

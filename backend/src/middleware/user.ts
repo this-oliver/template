@@ -1,5 +1,5 @@
 import * as UserData from "../data/user";
-import { BUCKET_S3_URI } from "../config/env";
+import { BUCKET_URL } from "../config/env";
 import { createErrorResponse } from "./helpers/error";
 import { BasicBucket } from "../utils/storage";
 import { generateWebTokens } from "../utils/crypto";
@@ -55,7 +55,7 @@ async function patchUser(req: Request, res: Response) {
 
 	if(authReq.file){
 		try {
-			avatar = await (new BasicBucket({ endpoint: BUCKET_S3_URI })).uploadFile(authReq.file);
+			avatar = await (new BasicBucket({ endpoint: BUCKET_URL })).uploadFile(authReq.file);
 		} catch (error) {
 			return createErrorResponse(res, `Failed to upload avatar (${(error as Error).message})`, 400);
       

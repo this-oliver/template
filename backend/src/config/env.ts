@@ -19,26 +19,24 @@ const DATABASE_URL: string = process.env.DATABASE_URL as string;
 const JWT_SECRET: string = process.env.JWT_SECRET as string;
 const ALLOWED_ORIGINS: string = process.env.ALLOWED_ORIGINS as string || "*";
 
-// Storage config
-const BUCKET_NAME: string = process.env.BUCKET_NAME as string;
-const BUCKET_S3_URI: string = process.env.BUCKET_URI as string;
-const BUCKET_S3_KEY: string = process.env.BUCKET_KEY as string;
-const BUCKET_S3_SECRET: string = process.env.BUCKET_SECRET as string;
-const BUCKET_GCP_ID: string = process.env.BUCKET_ID as string;
-const BUCKET_GCP_KEY_PATH: string = process.env.BUCKET_KEY_PATH as string;
+// Storage config (aws & gcp)
+const BUCKET_NAME: string = process.env.BUCKET_NAME as string; // aws & gcp
+const BUCKET_URL: string = process.env.BUCKET_URI as string; // aws
+const BUCKET_KEY: string = process.env.BUCKET_KEY as string; // aws
+const BUCKET_SECRET: string = process.env.BUCKET_SECRET as string; // aws
+const BUCKET_ID: string = process.env.BUCKET_ID as string; // gcp
+const BUCKET_KEY_PATH: string = process.env.BUCKET_KEY_PATH as string; // gcp
 
 export {
 	NODE_ENV,
 	PORT,
 	DATABASE_URL,
-	
 	JWT_SECRET,
 	ALLOWED_ORIGINS,
-
 	BUCKET_NAME,
-	BUCKET_S3_URI,
-	BUCKET_S3_KEY,
-	BUCKET_S3_SECRET,
-	BUCKET_GCP_ID,
-	BUCKET_GCP_KEY_PATH
+	BUCKET_URL,
+	BUCKET_KEY,
+	BUCKET_SECRET,
+	BUCKET_ID,
+	BUCKET_KEY_PATH
 };
