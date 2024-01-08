@@ -7,10 +7,12 @@ export interface User extends Document {
   password?: string;
 }
 
-export interface Image extends Document {
-  url: string;
+export interface Image {
+  src: string;
   alt: string;
 }
+
+export type NewImage = Image & { file: File };
 
 export interface Product extends Document {
   shop: string; // shop id

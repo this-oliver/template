@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useProductStore } from '~/stores/shop';
-import type { Product } from '~/types';
+import type { Product, NewImage } from '~/types';
 import type { ActionItem } from '~/components/base/BaseCard.vue';
 
 const props = defineProps({
@@ -15,16 +15,22 @@ const emit = defineEmits(['created', 'updated', 'deleted']);
 const productStore = useProductStore();
 const { notify } = useNotification();
 
-// omit _id, shop and slug
-type ProductForm = Omit<Product, '_id' | 'shop' | 'slug'>;
-
-const form = reactive<ProductForm>({
+// product form without _id, shop and slug fields
+const form = reactive<Omit<Product, '_id' | 'shop' | 'slug'>>({
 	name: props.product?.name || '',
 	description: props.product?.description || '',
 	price: props.product?.price || 0,
 	quantity: props.product?.quantity || 0,
 	images: props.product?.images || []
 });
+
+// uploaded images
+const newImages = ref<NewImage[]>([]);
+
+// convert files to images
+function convertFilesToImages(files: File[]): NewImage[] {
+	return files.map((file) => ({ src: URL.createObjectURL(file), alt: file.name, file }));
+}
 
 const validForm = computed<boolean>(() => {
 	return (
@@ -35,7 +41,6 @@ const validForm = computed<boolean>(() => {
 });
 
 const options = computed<ActionItem[]>(() => {
-
 	return props.product
 		? [
 			{
@@ -44,7 +49,7 @@ const options = computed<ActionItem[]>(() => {
 				color: validForm.value ? 'success' : undefined,
 				action: async () => {
 					try {
-						const product: Product = await productStore.updateProduct(props.product!._id, form);
+						const product: Product = await productStore.updateProduct(props.product!._id, form, newImages.value);
 						emit('updated', product);
 					} catch (error) {
 						notify('Product Error', (error as Error).message, 'error');
@@ -71,7 +76,7 @@ const options = computed<ActionItem[]>(() => {
 				color: validForm.value ? 'success' : undefined,
 				action: async () => {
 					try {
-						const product: Product = await productStore.createProduct(form);
+						const product: Product = await productStore.createProduct(form, newImages.value);
 						emit('created', product);
 					} catch (error) {
 						notify('Product Error', (error as Error).message, 'error');
@@ -80,8 +85,6 @@ const options = computed<ActionItem[]>(() => {
 			}
 		];
 });
-
-
 </script>
 
 <template>
@@ -115,6 +118,37 @@ const options = computed<ActionItem[]>(() => {
         <input-text
           v-model="form.quantity"
           label="Quantity"
+        />
+      </v-col>
+      <v-col cols="12">
+        <input-file
+          label="Images"
+          multiple
+          @input="(files: File[]) => newImages = convertFilesToImages(files)"
+        />
+      </v-col>
+      <v-col
+        v-for="image in newImages"
+        :key="image.src"
+        cols="12"
+        md="4"
+      >
+        <product-image-card
+          :src="image.src"
+          :alt="image.alt"
+          @delete="form.images.splice(form.images.indexOf(image), 1)"
+        />
+      </v-col>
+      <v-col
+        v-for="image in form.images"
+        :key="image.src"
+        cols="12"
+        md="4"
+      >
+        <product-image-card
+          :src="image.src"
+          :alt="image.alt"
+          @delete="form.images.splice(form.images.indexOf(image), 1)"
         />
       </v-col>
     </v-row>
