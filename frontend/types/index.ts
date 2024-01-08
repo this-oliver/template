@@ -39,3 +39,5 @@ export interface Order extends Document {
   customer: string; // user id
   items: { product: Product; quantity: number }[];
 }
+
+export type CartItem = { product: Product; quantity: number };
