@@ -1,4 +1,5 @@
 import * as ProductMiddleware from '../middleware/product';
+import { getMulter } from '../utils/parser';
 import type { Route } from "../types/infrastructure";
 
 const BASE_PATH = "/products";
@@ -8,7 +9,7 @@ const routes: Route[] = [
 		path: BASE_PATH,
 		method: "post",
 		protected: true,
-		handler: [ProductMiddleware.postProduct]
+		handler: [getMulter().any(), ProductMiddleware.postProduct]
 	},
 	{
 		path: BASE_PATH,
@@ -24,7 +25,7 @@ const routes: Route[] = [
 		path: `${BASE_PATH}/:id`,
 		method: "patch",
 		protected: true,
-		handler: [ProductMiddleware.patchProduct],
+		handler: [getMulter().any(), ProductMiddleware.patchProduct],
 	},
 	{
 		path: `${BASE_PATH}/:id`,

@@ -1,7 +1,27 @@
 import { defineStore } from 'pinia';
 import { useAuthStore } from '~/stores/auth';
 import { useRequest } from '~/composables/useRequest';
-import type { Shop, Product, Order } from '~/types';
+import type { Shop, Product, Order, NewImage } from '~/types';
+
+/**
+ * Returns a FormData object with two lists for the files `files-${index}` and
+ * the meta data `files-meta-${index}` (i.e. alt text). The first list contains
+ * the files and the second list contains the meta data as JSON strings.
+ */
+function createForm(object: Record<string, unknown>, newImages: NewImage[]): FormData {
+	const formData = new FormData();
+
+	for(const [key, value] of Object.entries(object)){
+		formData.append(key, value as string);
+	}
+
+	newImages.forEach((image, index) => {
+		formData.append(`files-${index}`, image.file);
+		formData.append(`files-meta-${index}`, JSON.stringify({ alt: image.alt }));
+	});
+
+	return formData;
+}
 
 const useShopStore = defineStore('shop', () => {
 	const { post, get, patch, remove } = useRequest();
@@ -96,16 +116,18 @@ const useProductStore = defineStore('product', () => {
 	const authStore = useAuthStore();
 	const shopStore = useShopStore();
 
+	const currency = ref<string>('SEK');
 	const products = ref<Product[]>([]);
 
-	async function createProduct(product:Partial<Product>): Promise<Product> {
+	async function createProduct(product:Partial<Product>, newImages: NewImage[]): Promise<Product> {
 		if(!shopStore.shop){
 			throw new Error('No shop exists to create product');
 		}
     
 		product.shop = shopStore.shop._id;
     
-		const { data, error } = await post('/products', product, { authorization: authStore.accessToken });
+		const formData = createForm(product, newImages);
+		const { data, error } = await post('/products', formData , { authorization: authStore.accessToken, contentType: undefined });
 
 		if(error.value){
   		throw new Error(error.value?.data.message || `Failed to create product`);
@@ -139,8 +161,9 @@ const useProductStore = defineStore('product', () => {
 		return products.value;
 	}
 
-	async function updateProduct(id:string, patchedProduct: Partial<Product>): Promise<Product> {
-		const { data, error } = await patch(`/products/${id}`, patchedProduct, { authorization: authStore.accessToken });
+	async function updateProduct(id:string, patchedProduct: Partial<Product>, newImages: NewImage[]): Promise<Product> {
+		const formData = createForm(patchedProduct, newImages);
+		const { data, error } = await patch(`/products/${id}`, formData, { authorization: authStore.accessToken, contentType: undefined });
 
 		if(error.value){
   		throw new Error(error.value?.data.message || `Failed to update product with id ${id}`);
@@ -173,6 +196,7 @@ const useProductStore = defineStore('product', () => {
 
 	return {
 		products,
+		currency,
 		createProduct,
 		getProduct,
 		indexProducts,

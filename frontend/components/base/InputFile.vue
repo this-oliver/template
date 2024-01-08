@@ -1,6 +1,10 @@
 <script setup lang="ts">
 
 const props = defineProps({
+	value: {
+		type: [File, Array] as PropType<File[]>,
+		default: undefined
+	},
 	color: {
 		type: String,
 		default: 'primary'
@@ -21,15 +25,18 @@ const props = defineProps({
 
 const emit = defineEmits([ 'input' ]);
 
-const files = ref<File[]>([]);
+const files = ref<File[]>(props.value || []);
 
-watch(files, (files) => {
-	if (files.length > 0) {
+watch(files, (newFiles) => {
+	if (newFiles.length > 0) {
 		if(props.multiple){
-			emit('input', files);
+			emit('input', newFiles);
 		}else{
-			emit('input', files[0]);
+			emit('input', newFiles[0]);
 		}
+
+		// remove files after emit
+		files.value = [];
 	}
 });
 

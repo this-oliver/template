@@ -14,7 +14,7 @@ const ProductModel = Mongoose.model("product", new Mongoose.Schema<ProductDocume
 		quantity: { type: Number, required: true },
 		slug: { type: String, default: "" },
 		images: [{
-			url: { type: String, required: true },
+			src: { type: String, required: true },
 			alt: { type: String, required: true }
 		}]
 	},

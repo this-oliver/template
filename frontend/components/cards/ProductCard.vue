@@ -45,7 +45,7 @@ const thumbnail = computed<Image>(() => {
 	const randomImage = `https://picsum.photos/seed/${seed}/800/600`;
   
 	return {
-		src: props.product.images[0]?.url || randomImage,
+		src: props.product.images[0]?.src || randomImage,
 		alt: props.product.images[0]?.alt || 'Product image'
 	};
 });
@@ -57,6 +57,9 @@ const thumbnail = computed<Image>(() => {
       <v-img
         :src="thumbnail.src"
         :alt="thumbnail.alt"
+        height="300px"
+        width="100%"
+        cover
       />
     </nuxt-link>
     
@@ -65,10 +68,7 @@ const thumbnail = computed<Image>(() => {
       <small :class="props.product.quantity === 0 ? 'text-error' : 'text-primary'">{{ quantity }}</small>
     </v-card-title>
     <v-card-subtitle>
-      {{ props.product.price }}
+      {{ props.product.price }} <small>{{ productStore.currency }}</small>
     </v-card-subtitle>
-    <v-card-text>
-      {{ props.product.description }}
-    </v-card-text>
   </base-card>
 </template>
