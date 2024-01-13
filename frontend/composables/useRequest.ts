@@ -75,19 +75,6 @@ function _buildBody(body: object | string): string | FormData {
 	return JSON.stringify(body);
 }
 
-/**
- * returns interceptor (a hook into the event lifecycle for requests, request errors, responses and response errors)
- */
-function _buildInterceptor(){
-	return {
-		// Handle the request errors
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		onRequestError(context: any){
-			throw new Error(context.error.message);
-		}
-	};
-}
-
 export function useRequest () {
 	const BASE_URL = useRuntimeConfig().public.baseUrl;
 
@@ -124,7 +111,6 @@ export function useRequest () {
 		return useFetch(
 			url,
 			{
-				..._buildInterceptor(),
 				..._buildConfig(options),
 				method: 'POST',
 				body: _buildBody(body)
@@ -136,7 +122,6 @@ export function useRequest () {
 		url = _buildUrl(url, BASE_URL);
 
 		return useFetch(url, {
-			..._buildInterceptor(),
 			..._buildConfig(options),
 			method: 'GET',
 		});
@@ -146,7 +131,6 @@ export function useRequest () {
 		url = _buildUrl(url, BASE_URL);
 
 		return useFetch(url, {
-			..._buildInterceptor(),
 			..._buildConfig(options),
 			body: _buildBody(body),
 			method: 'PATCH',
@@ -158,7 +142,6 @@ export function useRequest () {
 		url = _buildUrl(url, BASE_URL);
 
 		return useFetch(url, {
-			..._buildInterceptor(),
 			..._buildConfig(options),
 			method: 'DELETE',
 		});

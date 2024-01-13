@@ -4,9 +4,14 @@ import { useProductStore } from '~/stores/shop';
 
 const authStore = useAuthStore();
 const productStore = useProductStore();
+const { notify } = useNotification();
 
 onMounted(() => {
-	productStore.init();
+	try {
+		productStore.init();
+	} catch (error) {
+		notify('Product', (error as Error).message, 'error');
+	}
 });
 
 </script>
