@@ -34,21 +34,6 @@ const quantity = computed<string>(() => {
 });
 
 const options = computed<ActionItem[]>(() => {
-	const baseOptions: ActionItem[] = [
-		{
-			label: 'Add',
-			color: 'success',
-			disabled: props.product.quantity === 0,
-			action: () => orderStore.addToCart(props.product)
-		},
-		{
-			label: 'Remove',
-			color: 'grey',
-			disabled: cartCount.value === 0,
-			action: () => orderStore.removeFromCart(props.product)
-		}
-	];
-
 	const adminOptions: ActionItem[] = [
 		{
 			label: 'Edit',
@@ -63,8 +48,8 @@ const options = computed<ActionItem[]>(() => {
 	];
 
 	return props.admin
-		? [...baseOptions, ...adminOptions]
-		: baseOptions;
+		? [...adminOptions]
+		: [];
 });
 
 type Image = { src: string; alt: string };
@@ -99,8 +84,42 @@ const thumbnail = computed<Image>(() => {
       {{ props.product.price }} <small>{{ productStore.currency }}</small>
     </v-card-subtitle>
     
-    <v-card-text v-if="cartCount > 0">
+    <!--<v-card-text v-if="cartCount > 0">
       ({{ cartCount }})
-    </v-card-text>
+    </v-card-text>-->
+
+    <v-row justify="center">
+      <v-col
+        cols="12"
+        md="8"
+      >
+        <v-text-field
+          class="mt-1"
+          density="compact"
+          :value="cartCount"
+        >
+          <template #append>
+            <base-btn
+              color="success"
+              size="small"
+              :disabled="props.product.quantity === 0"
+              @click="orderStore.addToCart(props.product)"
+            >
+              <v-icon icon="mdi-plus" />
+            </base-btn>
+          </template>
+          <template #prepend>
+            <base-btn
+              color="error"
+              size="small"
+              :disabled="cartCount === 0"
+              @click="orderStore.removeFromCart(props.product)"
+            >
+              <v-icon icon="mdi-minus" />
+            </base-btn>
+          </template>
+        </v-text-field>
+      </v-col>
+    </v-row>
   </base-card>
 </template>
