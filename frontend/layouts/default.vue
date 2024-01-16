@@ -3,7 +3,7 @@
     <!-- navigation -->
     <app-nav />
     <app-sidebar />
-    <cart-card />
+    <cart-sidebar-card />
 
     <!-- main content -->
     <v-main>

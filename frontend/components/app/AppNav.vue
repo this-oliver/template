@@ -47,7 +47,8 @@ const options = computed<ActionItem[]>(() => smAndDown.value ? [] : navigation.o
     </base-btn>
 
     <cart-btn
-      v-if="!smAndDown && order.totalCartItems > 0"
+      v-if="order.totalCartItems > 0"
+      :compact="smAndDown"
       class="mx-1"
     />
 

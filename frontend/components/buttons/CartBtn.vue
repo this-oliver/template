@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { useOrderStore } from '~/stores/shop';
 
+const props = defineProps({
+	compact: {
+		type: Boolean,
+		default: false,
+	},
+});
+
 const orderStore = useOrderStore();
 const cartItemCount = computed<string>(() => orderStore.totalCartItems > 0 ? `(${orderStore.totalCartItems})` : '');
 
@@ -8,6 +15,12 @@ const cartItemCount = computed<string>(() => orderStore.totalCartItems > 0 ? `($
 
 <template>
   <base-btn @click="orderStore.showCart = !orderStore.showCart">
-    Cart {{ cartItemCount }}
+    <span v-if="props.compact">
+      <v-icon icon="mdi-cart" />
+      {{ cartItemCount }}
+    </span>  
+    <span v-else>
+      Cart {{ cartItemCount }}
+    </span>
   </base-btn>
 </template>
