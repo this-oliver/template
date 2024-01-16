@@ -78,74 +78,43 @@ function _buildBody(body: object | string): string | FormData {
 export function useRequest () {
 	const BASE_URL = useRuntimeConfig().public.baseUrl;
 
-	// wrapper for fetch API with base url and default headers
-	async function request (url: string, options?: FetchConfig) {
-		try {
-			const config: RequestInit = _buildConfig(options);
-
-			const path = _buildUrl(url, BASE_URL);
-
-			const response = await fetch(path, { ...config, ...options });
-
-			if (!response.ok) {
-				throw response;
-			}
-
-			return response.json();
-		} catch (error: unknown) {
-			if (error instanceof Response) {
-				const message = await error.text();
-
-				throw new Error(message);
-			} else if (error instanceof Error) {
-				throw error;
-			} else {
-				throw new TypeError('Something went wrong.');
-			}
-		}
-	}
-
 	async function post (url: string, body: object | string, options?: FetchConfig) {
 		url = _buildUrl(url, BASE_URL);
 
-		return useFetch(
-			url,
-			{
-				..._buildConfig(options),
-				method: 'POST',
-				body: _buildBody(body)
-			}
-		);
+		return $fetch(url, {
+			..._buildConfig(options),
+			body: _buildBody(body),
+			method: 'POST'
+		});
 	}
 
 	async function get (url: string, options?: FetchConfig) {
 		url = _buildUrl(url, BASE_URL);
 
-		return useFetch(url, {
+		return $fetch(url, {
 			..._buildConfig(options),
-			method: 'GET',
+			method: 'GET'
 		});
 	}
 
 	async function patch (url: string, body: object | string, options?: FetchConfig) {
 		url = _buildUrl(url, BASE_URL);
 
-		return useFetch(url, {
+		return $fetch(url, {
 			..._buildConfig(options),
 			body: _buildBody(body),
-			method: 'PATCH',
+			method: 'PATCH'
 		});
 	}
 
-	// 'delete' is a reserved word
 	async function remove (url: string, options?: FetchConfig) {
 		url = _buildUrl(url, BASE_URL);
 
-		return useFetch(url, {
+		return $fetch(url, {
 			..._buildConfig(options),
-			method: 'DELETE',
+			method: 'DELETE'
 		});
 	}
 
-	return { request, post, get, patch, remove };
+	return { post, get, patch, remove };
 }

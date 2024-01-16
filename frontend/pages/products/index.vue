@@ -6,9 +6,9 @@ const authStore = useAuthStore();
 const productStore = useProductStore();
 const { notify } = useNotification();
 
-onMounted(() => {
+onMounted(async () => {
 	try {
-		productStore.init();
+		await productStore.init();
 	} catch (error) {
 		notify('Product', (error as Error).message, 'error');
 	}
