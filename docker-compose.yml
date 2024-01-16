@@ -1,0 +1,19 @@
+# create containers for the backend and frontend services
+services:
+  backend:
+    image: template-backend
+    build: ./backend
+    ports:
+      - "3001:3001"
+    env_file:
+      - ./backend/.env
+  
+  frontend:
+    image: template-frontend
+    build: ./frontend
+    ports:
+      - "80:3000"
+    env_file:
+      - ./frontend/.env
+    depends_on:
+      - backend

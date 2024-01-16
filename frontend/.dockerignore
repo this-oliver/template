@@ -1,0 +1,6 @@
+.vscode
+.env*
+.eslint*
+.gitignore
+.npmrc
+node_modules
