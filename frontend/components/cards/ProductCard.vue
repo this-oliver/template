@@ -93,11 +93,14 @@ const thumbnail = computed<Image>(() => {
         cols="12"
         md="8"
       >
-        <v-text-field
-          class="mt-1"
-          density="compact"
-          :value="cartCount"
-        >
+        <v-input class="mt-1">
+          <p
+            class="text-center text-grey"
+            style="width: 100%;"
+          >
+            {{ cartCount }}
+          </p>
+          
           <template #append>
             <base-btn
               color="success"
@@ -118,7 +121,7 @@ const thumbnail = computed<Image>(() => {
               <v-icon icon="mdi-minus" />
             </base-btn>
           </template>
-        </v-text-field>
+        </v-input>
       </v-col>
     </v-row>
   </base-card>
