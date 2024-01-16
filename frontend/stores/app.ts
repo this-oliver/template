@@ -8,10 +8,6 @@ const useNavigationStore = defineStore('navigation', () => {
 	const options = computed<ActionItem[]>(() => {
 		const base: ActionItem[] = [
 			{
-				label: 'features',
-				to: '/features'
-			},
-			{
 				label: 'products',
 				to: '/products'
 			}
