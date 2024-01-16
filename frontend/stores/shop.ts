@@ -33,51 +33,21 @@ const useShopStore = defineStore('shop', () => {
 	const getShopDescription = computed(() => shop.value?.description ?? '');
 
 	async function createShop(newShop: Partial<Shop>): Promise<Shop> {
-		const { data, error } = await post('/shops', newShop, { authorization: authStore.accessToken });
-
-		if(error.value){
-  		throw new Error(error.value?.data.message || 'Failed to create shop.');
-  	}
-
-		shop.value = data.value as Shop;
-
+		shop.value = await post('/shops', newShop, { authorization: authStore.accessToken }) as Shop;
 		return shop.value;
 	}
 
 	async function indexShops(): Promise<Shop[]> {
-		const { data, error } = await get('/shops');
-
-		if(error.value){
-  		throw new Error(error.value?.data.message || 'Failed to fetch shops.');
-  	}
-
-		if(!data.value){
-			return [];
-		}
-		
-		return data.value as Shop[];
+		return await get('/shops') as Shop[];
 	}
 
 	async function updateShop(id:string, patchedShop: Partial<Shop>): Promise<Shop> {
-		const { data, error } = await patch(`/shops/${id}`, patchedShop, { authorization: authStore.accessToken });
-
-		if(error.value){
-  		throw new Error(error.value?.data.message || `Failed to update shop with id ${id}`);
-  	}
-    
-		shop.value = data.value as Shop;
-
+		shop.value = await patch(`/shops/${id}`, patchedShop, { authorization: authStore.accessToken }) as Shop;
 		return shop.value;
 	}
 
 	async function deleteShop(id:string): Promise<Shop> {
-		const { data, error } = await remove(`/shops/${id}`);
-		
-		if(error.value){
-  		throw new Error(error.value?.data.message || `Failed to delete shop with id ${id}`);
-  	}
-    
-		return data.value as Shop;
+		return await remove(`/shops/${id}`) as Shop;
 	}
 
 	async function init(): Promise<void> {
@@ -119,75 +89,50 @@ const useProductStore = defineStore('product', () => {
 	const currency = ref<string>('SEK');
 	const products = ref<Product[]>([]);
 
-	async function createProduct(product:Partial<Product>, newImages: NewImage[]): Promise<Product> {
+	async function createProduct(newProduct:Partial<Product>, newImages: NewImage[]): Promise<Product> {
 		if(!shopStore.shop){
 			throw new Error('No shop exists to create product');
 		}
     
-		product.shop = shopStore.shop._id;
+		newProduct.shop = shopStore.shop._id;
     
-		const formData = createForm(product, newImages);
-		const { data, error } = await post('/products', formData , { authorization: authStore.accessToken, contentType: undefined });
-
-		if(error.value){
-  		throw new Error(error.value?.data.message || `Failed to create product`);
-  	}
+		const formData = createForm(newProduct, newImages);
+		const product = await post('/products', formData , { authorization: authStore.accessToken, contentType: undefined }) as Product;
 
 		// add to products
-		products.value.push(data.value as Product);
+		products.value.push(product as Product);
     
-		return data.value as Product;
+		return product;
 	}
 
 	async function getProduct(id: string): Promise<Product> {
-		const { data, error } = await get(`/products/${id}`);
-
-		if(error.value){
-  		throw new Error(error.value?.data.message || `Failed to get product with id ${id}`);
-  	}
-    
-		return data.value as Product;
+		return await get(`/products/${id}`) as Product;
 	}
 
 	async function indexProducts(): Promise<Product[]> {
-		const { data, error } = await get('/products');
-		
-		if(error.value){
-  		throw new Error(error.value?.data.message || `Failed to fetch products`);
-  	}
-    
-		products.value = data.value as Product[];
-    
+		products.value = await get('/products') as Product[];
 		return products.value;
 	}
 
 	async function updateProduct(id:string, patchedProduct: Partial<Product>, newImages: NewImage[]): Promise<Product> {
 		const formData = createForm(patchedProduct, newImages);
-		const { data, error } = await patch(`/products/${id}`, formData, { authorization: authStore.accessToken, contentType: undefined });
-
-		if(error.value){
-  		throw new Error(error.value?.data.message || `Failed to update product with id ${id}`);
-  	}
-
+		const product = await patch(`/products/${id}`, formData, { authorization: authStore.accessToken, contentType: undefined }) as Product;
+		
 		// update products
 		const index = products.value.findIndex((product) => product._id === id);
-		products.value[index] = data.value as Product;
+		products.value[index] = product;
     
-		return data.value as Product;
+		return product;
 	}
 
 	async function deleteProduct(id:string): Promise<Product> {
-		const { data, error } = await remove(`/products/${id}`, { authorization: authStore.accessToken });
-
-		if(error.value){
-  		throw new Error(error.value?.data.message || `Failed to delete product with id ${id}`);
-  	}
+		const product = await remove(`/products/${id}`, { authorization: authStore.accessToken }) as Product;
 
 		// remove from products
 		const index = products.value.findIndex((product) => product._id === id);
 		products.value.splice(index, 1);
 
-		return data.value as Product;
+		return product;
 	}
 
 	async function init(): Promise<void> {
@@ -275,55 +220,24 @@ const useOrderStore = defineStore('order', () => {
 	}
 
 	async function createOrder(order:Partial<Order>): Promise<Order> {
-		const { data, error } = await post('/orders', order);
-
-		if(error.value){
-  		throw new Error(error.value?.data.message || `Failed to create order`);
-  	}
-
-		return data.value as Order;
+		return await post('/orders', order) as Order;
 	}
 
 	async function getOrder(id: string): Promise<Order> {
-		const { data, error } = await get(`/orders/${id}`);
-
-		if(error.value){
-  		throw new Error(error.value?.data.message || `Failed to get order with id ${id}`);
-  	}
-
-		return data.value as Order;
+		return await get(`/orders/${id}`) as Order;
 	}
 
 	async function indexOrders(): Promise<Order[]> {
-		const { data, error } = await get('/orders');
-
-		if(error.value){
-  		throw new Error(error.value?.data.message || `Failed to fetch orders`);
-  	}
-
-		orders.value = data.value as Order[];
-    
+		orders.value = await get('/orders') as Order[];
 		return orders.value;
 	}
 
 	async function updateOrder(id:string, patchedOrder: Partial<Order>): Promise<Order> {
-		const { data, error } = await patch(`/orders/${id}`, patchedOrder, { authorization: authStore.accessToken });
-
-		if(error.value){
-  		throw new Error(error.value?.data.message || `Failed to update order with id ${id}`);
-  	}
-
-		return data.value as Order;
+		return await patch(`/orders/${id}`, patchedOrder, { authorization: authStore.accessToken }) as Order;
 	}
 
 	async function deleteOrder(id:string): Promise<Order> {
-		const { data, error } = await remove(`/orders/${id}`);
-
-		if(error.value){
-  		throw new Error(error.value?.data.message || `Failed to delete order with id ${id}`);
-  	}
-
-		return data.value as Order;
+		return await remove(`/orders/${id}`) as Order;
 	}
 
 	return {

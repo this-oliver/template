@@ -66,17 +66,10 @@ export const useAuthStore = defineStore('auth', () => {
 	 */
   async function register(username: string, password: string): Promise<User> {
   	logout();
-    
-  	const { data, error } = await post('/auth/register', { username, password });
 
-  	if(error.value){
-  		throw new Error(error.value?.data.message || 'Failed to register.');
-  	}
-    
-  	const auth = data.value as Credentials;
-
-  	_setUser(auth.user);
-  	_setTokens(auth.accessToken, auth.refreshToken);
+  	const credentials = await post('/auth/register', { username, password }) as Credentials;
+  	_setUser(credentials.user);
+  	_setTokens(credentials.accessToken, credentials.refreshToken);
 		
   	return user.value as User;
   }
@@ -87,17 +80,10 @@ export const useAuthStore = defineStore('auth', () => {
 	 */
   async function login(username: string, password: string): Promise<User>{
   	logout();
-    
-  	const { data, error } = await post('/auth/login', { username, password });
 
-  	if(error.value){
-  		throw new Error(error.value?.data.message || 'Failed to login.');
-  	}
-
-  	const auth = data.value as Credentials;
-		
-  	_setUser(auth.user);
-  	_setTokens(auth.accessToken, auth.refreshToken);
+  	const credentials = await post('/auth/login', { username, password }) as Credentials;
+  	_setUser(credentials.user);
+  	_setTokens(credentials.accessToken, credentials.refreshToken);
 		
   	return user.value as User;
   }
@@ -110,14 +96,7 @@ export const useAuthStore = defineStore('auth', () => {
   		throw new Error('Missing refresh token.');
   	}
 
-  	const { data, error } = await post('/auth/refresh', { refreshToken: refreshToken.value, accessToken: accessToken.value });
-
-  	if(error.value){
-  		throw new Error(error.value?.data.message || 'Failed to refresh tokens.');
-  	}
-
-  	const tokens = data.value as Tokens;
-
+  	const tokens = await post('/auth/refresh', { refreshToken: refreshToken.value, accessToken: accessToken.value }) as Tokens;
   	_setTokens(tokens.accessToken, tokens.refreshToken);
   }
 
@@ -125,14 +104,7 @@ export const useAuthStore = defineStore('auth', () => {
 	 * Updates user.
 	 */
   async function updateUser (id: string, patchedUser: Partial<User>): Promise<User> {
-  	const { data, error } = await patch(`/users/${id}`, patchedUser, { authorization: accessToken.value });
-
-  	if(error.value){
-  		throw new Error(error.value?.data.message || 'Failed to update user.');
-  	}
-    
-  	const updatedUser = data.value as User;
-
+  	const updatedUser = await patch(`/users/${id}`, patchedUser, { authorization: accessToken.value }) as User;
   	_setUser(updatedUser);
 
   	return user.value as User;
@@ -142,14 +114,7 @@ export const useAuthStore = defineStore('auth', () => {
 	 * Updates user password.
 	 */
   async function updateUserPassword (id: string, form: {oldPassword: string, newPassword: string}): Promise<User> {
-  	const { data, error } = await patch(`/auth/${id}/password`, form, { authorization: accessToken.value });
-
-  	if(error.value){
-  		throw new Error(error.value?.data.message || 'Failed to update user password.');
-  	}
-    
-  	const updatedUser = data.value as User;
-
+  	const updatedUser = await patch(`/auth/${id}/password`, form, { authorization: accessToken.value }) as User;
   	_setUser(updatedUser);
 
   	return user.value as User;
