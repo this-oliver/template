@@ -10,12 +10,10 @@ ARG PNPM_VERSION=8.9.2
 FROM node:${NODE_VERSION}-alpine as base
 
 # Set working directory
-WORKDIR /backend
+WORKDIR /app
 
-# Copy necessary files
-COPY src ./src
+# Copy package files
 COPY package.json .
-COPY tsconfig.json .
 COPY pnpm-lock.yaml .
 
 # Install pnpm
@@ -33,6 +31,11 @@ RUN rm -rf /var/cache/apk/*
 # Install Node.js dependencies
 RUN pnpm install --frozen-lockfile --shamefully-hoist
 
+# Copy source code
+COPY src ./src
+COPY README.md .
+COPY tsconfig.json .
+
 # Build the Node.js app
 RUN pnpm build
 
@@ -41,7 +44,7 @@ EXPOSE 3001
 
 # Set environment variables
 ENV ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
-ENV DB_URI=${DB_URI}
+ENV DATABASE_URL=${DATABASE_URL}
 ENV BUCKET_NAME=${BUCKET_NAME}
 ENV BUCKET_ID=${BUCKET_ID}
 ENV BUCKET_KEY_PATH=${BUCKET_KEY_PATH}
