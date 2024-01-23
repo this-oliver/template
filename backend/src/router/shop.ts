@@ -1,5 +1,4 @@
 import * as ShopMiddleware from '../middleware/shop';
-import { indexOrdersByShop } from '../middleware/order';
 import { indexProductsByShop } from '../middleware/product';
 import type { Route } from "../types/infrastructure";
 
@@ -26,11 +25,6 @@ const routes: Route[] = [
 		path: `${BASE_PATH}/:id/products`,
 		method: "get",
 		handler: [indexProductsByShop],
-	},
-	{
-		path: `${BASE_PATH}/:id/orders`,
-		method: "get",
-		handler: [indexOrdersByShop],
 	},
 	{
 		path: `${BASE_PATH}/:id`,

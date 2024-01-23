@@ -35,28 +35,6 @@ async function indexOrders(req: Request, res: Response) {
 	}
 }
 
-async function indexOrdersByShop(req: Request, res: Response) {
-	const { id } = req.params;
-
-	try {
-		const orders = await OrderData.indexOrdersByShop(id);
-		return res.status(200).send(orders);
-	} catch (error) {
-		return res.status(400).send({ message: (error as Error).message });
-	}
-}
-
-async function indexOrdersByUser(req: Request, res: Response) {
-	const { id } = req.params;
-
-	try {
-		const orders = await OrderData.indexOrdersByUser(id);
-		return res.status(200).send(orders);
-	} catch (error) {
-		return res.status(400).send({ message: (error as Error).message });
-	}
-}
-
 async function patchOrder(req: Request, res: Response) {
 	const authReq = req as AuthenticatedRequest;
 	const { id } = authReq.params;
@@ -77,7 +55,5 @@ export {
 	postOrder,
 	getOrderById,
 	indexOrders,
-	indexOrdersByShop,
-	indexOrdersByUser,
 	patchOrder
 };

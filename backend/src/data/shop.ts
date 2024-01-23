@@ -1,6 +1,6 @@
 import Mongoose from "mongoose";
 import { Schema } from "mongoose";
-import { indexOrdersByShop } from "./order";
+import { indexOrders } from "./order";
 import { indexProductsByShop } from "./product";
 import type { Shop as IShop } from "../types/logic";
 
@@ -49,13 +49,15 @@ async function deleteShop(id: string): Promise<ShopDocument | null> {
 		throw new Error(`Shop with id ${id} not found`);
 	}
 
-	const orders = await indexOrdersByShop(id);
+	// dont delete shop if it has incomplete orders or products
+	const orders = await indexOrders();
 	const incompleteOrders = orders.filter(order => order.status !== "completed" && order.status !== "cancelled");
 
 	if(incompleteOrders.length > 0){
 		throw new Error(`Shop with id ${id} cannot be deleted because it has incomplete orders`);
 	}
   
+	// dont delete shop if it has products
 	const products = await indexProductsByShop(id);
 
 	if(products.length > 0){

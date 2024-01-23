@@ -33,11 +33,14 @@ export interface Shop extends Document {
 
 type OrderStatus = "pending" | "completed" | "cancelled";
 
-export interface Order extends Document {
-  status: OrderStatus;
-  shop: string; // shop id
-  customer: string; // user id
-  items: { product: Product; quantity: number }[];
-}
+export interface OrderItem {
+  product: Product;
+  quantity: number
+};
 
-export type CartItem = { product: Product; quantity: number };
+export interface Order extends Document {
+  customer: { email: string; };
+  status: OrderStatus;
+  currency: string;
+  items: OrderItem[];
+}

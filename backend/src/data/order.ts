@@ -1,5 +1,4 @@
 import Mongoose from "mongoose";
-import { Schema } from "mongoose";
 import { ProductDocument, ProductModel, getProductById } from "./product";
 import type { Order as IOrder } from "../types/logic";
 
@@ -7,8 +6,9 @@ type OrderDocument = IOrder & Mongoose.Document;
 
 const OrderModel = Mongoose.model("order", new Mongoose.Schema<OrderDocument>(
 	{
-		shop: { type: Schema.Types.ObjectId, ref: "shop" },
-		customer: { type: Schema.Types.ObjectId, ref: "user" },
+		status: { type: String, required: true },
+		customer: { email: { type: String, required: true } },
+		currency: { type: String, required: true },
 		items: [{
 			quantity: { type: Number, required: true },
 			product: { type: ProductModel.schema, required: true }
@@ -21,7 +21,7 @@ async function createOrder(order: IOrder): Promise<OrderDocument> {
 	
 	// check if the ordered items are in stock
 	for(const item of order.items){
-		const id: string = (item.product as ProductDocument).id;
+		const id: string = (item.product as ProductDocument)._id;
     
 		// use the product in the database to check if it exists and has enough stock
 		// instead of the product in the order (which may be outdated, non-existent or manipulated)
@@ -36,7 +36,22 @@ async function createOrder(order: IOrder): Promise<OrderDocument> {
 		}
 	}
   
-	return await OrderModel.create(new OrderModel(order));
+	const newOrder = await OrderModel.create(new OrderModel(order));
+
+	// update the stock of the products
+	for(const item of newOrder.items){
+		const id: string = (item.product as ProductDocument)._id;
+		const product = await getProductById(id);
+
+		if(!product){
+			throw new Error(`Failed to get and update stock for product with id ${id}`);
+		}
+
+		product.quantity -= item.quantity;
+		await product.save();
+	}
+
+	return newOrder;
 }
 
 async function getOrderById(id: string): Promise<OrderDocument | null> {
@@ -45,22 +60,6 @@ async function getOrderById(id: string): Promise<OrderDocument | null> {
 
 async function indexOrders(): Promise<OrderDocument[]> {
 	return await OrderModel.find()
-		.populate('shop')
-		.populate('customer')
-		.exec();
-}
-
-async function indexOrdersByShop(shopId: string): Promise<OrderDocument[]> {
-	return await OrderModel.find({ shop: shopId })
-		.populate('shop')
-		.populate('customer')
-		.exec();
-}
-
-async function indexOrdersByUser(userId: string): Promise<OrderDocument[]> {
-	return await OrderModel.find({ customer: userId })
-		.populate('shop')
-		.populate('customer')
 		.exec();
 }
 
@@ -86,8 +85,6 @@ export {
 	createOrder,
 	getOrderById,
 	indexOrders,
-	indexOrdersByShop,
-	indexOrdersByUser,
 	updateOrder,
 	deleteOrder
 };

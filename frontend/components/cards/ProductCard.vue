@@ -18,12 +18,12 @@ const productStore = useProductStore();
 const orderStore = useOrderStore();
 
 const cartCount = computed<number>(()=> {
-	const index = orderStore.cart.findIndex((item) => item.product._id === props.product._id);
+	const index = orderStore.cartItems.findIndex((item) => item.product._id === props.product._id);
 
 	if(index < 0){
 		return 0;
 	} else {
-		return orderStore.cart[index].quantity;
+		return orderStore.cartItems[index].quantity;
 	}
 });
 
