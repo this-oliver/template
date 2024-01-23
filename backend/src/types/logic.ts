@@ -4,7 +4,6 @@
 
 import type { ObjectId } from "mongoose";
 
-
 export interface User {
   username: string;
   password: string;
@@ -34,9 +33,15 @@ export interface Shop {
 
 type OrderStatus = "pending" | "completed" | "cancelled";
 
+interface OrderItem {
+  product: Product;
+  quantity: number
+}
+
+// TODO: add shipping address, tracking number, etc.
 export interface Order {
+  customer: { email: string; };
   status: OrderStatus;
-  shop: string | ObjectId; // shop id
-  customer: string | ObjectId; // user id
-  items: { product: Product; quantity: number }[];
+  items: OrderItem[];
+  currency: string;
 }

@@ -7,7 +7,6 @@ const routes: Route[] = [
 	{
 		path: BASE_PATH,
 		method: "post",
-		protected: true,
 		handler: [OrderMiddleware.postOrder]
 	},
 	{

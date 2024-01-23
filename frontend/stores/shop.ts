@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { useAuthStore } from '~/stores/auth';
 import { useRequest } from '~/composables/useRequest';
-import type { Shop, Product, Order, NewImage, CartItem } from '~/types';
+import type { Shop, Product, Order, NewImage, OrderItem } from '~/types';
 
 /**
  * Returns a FormData object with two lists for the files `files-${index}` and
@@ -155,104 +155,110 @@ const useOrderStore = defineStore('order', () => {
 	const { post, get, patch, remove } = useRequest();
 	const authStore = useAuthStore();
 
-	const cart = ref<CartItem[]>([]);
+	const cartItems = ref<OrderItem[]>([]);
 	const orders = ref<Order[]>([]);
 	const showCart = ref<boolean>(false);
 
 	const productStore = useProductStore();
 
 	const totalCartItems = computed<number>(() => {
-		let total = 0;
-		cart.value.forEach((item) => total = total + item.quantity);
+  	let total = 0;
+  	cartItems.value.forEach((item) => total = total + item.quantity);
 
-		return total;
+  	return total;
 	});
   
 	const totalCartCost = computed<number>(() => {
-		let cost = 0;
-		cart.value.forEach((item) => cost = cost + (item.quantity * item.product.price));
+  	let cost = 0;
+  	cartItems.value.forEach((item) => cost = cost + (item.quantity * item.product.price));
 
-		return cost;
+  	return cost;
 	});
 
 	function addToCart(product: Product): void {
-		// do nothing if product does not have stock
-		if(product.quantity <= 0){
-			return;
-		}
+  	// do nothing if product does not have stock
+  	if(product.quantity <= 0){
+  		return;
+  	}
     
-		const index = cart.value.findIndex((item) => item.product._id === product._id);
+  	const index = cartItems.value.findIndex((item) => item.product._id === product._id);
     
-		// if it already exists, increase quantity
-		if(index >= 0){
-			cart.value[index].quantity ++;
-		}
-		// otherwise, add to cart
-		else {
-			cart.value.push({ product, quantity: 1 });
-		}
+  	// if it already exists, increase quantity
+  	if(index >= 0){
+  		cartItems.value[index].quantity ++;
+  	}
+  	// otherwise, add to cart
+  	else {
+  		cartItems.value.push({ product, quantity: 1 });
+  	}
 
-		// reduce quantity in product store
-		const productIndex = productStore.products.findIndex((item) => item._id === product._id);
-		productStore.products[productIndex].quantity --;
+  	// reduce quantity in product store
+  	const productIndex = productStore.products.findIndex((item) => item._id === product._id);
+  	productStore.products[productIndex].quantity --;
 	}
 
 	function removeFromCart(product: Product): void {
-		const index = cart.value.findIndex((item) => item.product._id === product._id);
+  	const index = cartItems.value.findIndex((item) => item.product._id === product._id);
 
-		// do nothing if product is not in cart
-		if(index === -1){
-			return;
-		}
+  	// do nothing if product is not in cart
+  	if(index === -1){
+  		return;
+  	}
 
-		// otherwise, reduce quantity if quantity is greater than 1 otherwise, remove entirely
-		else if(cart.value[index].quantity > 1){
-			cart.value[index].quantity --;
-		}
+  	// otherwise, reduce quantity if quantity is greater than 1 otherwise, remove entirely
+  	else if(cartItems.value[index].quantity > 1){
+  		cartItems.value[index].quantity --;
+  	}
 
-		else {
-			cart.value.splice(index, 1);
-		}
+  	else {
+  		cartItems.value.splice(index, 1);
+  	}
 
-		// reduce quantity in product store
-		const productIndex = productStore.products.findIndex((item) => item._id === product._id);
-		productStore.products[productIndex].quantity ++;
+  	// reduce quantity in product store
+  	const productIndex = productStore.products.findIndex((item) => item._id === product._id);
+  	productStore.products[productIndex].quantity ++;
 	}
 
-	async function createOrder(order:Partial<Order>): Promise<Order> {
-		return await post('/orders', order) as Order;
+	async function createOrder(order: Partial<Order>): Promise<Order> {
+  	const newOrder = await post('/orders', order) as Order;
+
+		if(newOrder){
+			cartItems.value = [];
+		}
+
+		return newOrder;
 	}
 
 	async function getOrder(id: string): Promise<Order> {
-		return await get(`/orders/${id}`) as Order;
+  	return await get(`/orders/${id}`) as Order;
 	}
 
 	async function indexOrders(): Promise<Order[]> {
-		orders.value = await get('/orders') as Order[];
-		return orders.value;
+  	orders.value = await get('/orders') as Order[];
+  	return orders.value;
 	}
 
 	async function updateOrder(id:string, patchedOrder: Partial<Order>): Promise<Order> {
-		return await patch(`/orders/${id}`, patchedOrder, { authorization: authStore.accessToken }) as Order;
+  	return await patch(`/orders/${id}`, patchedOrder, { authorization: authStore.accessToken }) as Order;
 	}
 
 	async function deleteOrder(id:string): Promise<Order> {
-		return await remove(`/orders/${id}`) as Order;
+  	return await remove(`/orders/${id}`) as Order;
 	}
 
 	return {
-		orders,
-		cart,
-		showCart,
-		totalCartItems,
-		totalCartCost,
-		addToCart,
-		removeFromCart,
-		createOrder,
-		getOrder,
-		indexOrders,
-		updateOrder,
-		deleteOrder
+  	orders,
+  	cartItems,
+  	showCart,
+  	totalCartItems,
+  	totalCartCost,
+  	addToCart,
+  	removeFromCart,
+  	createOrder,
+  	getOrder,
+  	indexOrders,
+  	updateOrder,
+  	deleteOrder
 	};
 });
 
