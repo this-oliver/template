@@ -31,7 +31,7 @@ export interface Shop extends Document {
   products: string | Product[]; // ids or products
 }
 
-type OrderStatus = "pending" | "completed" | "cancelled";
+export type OrderStatus = "pending" | "shipped" | "completed" | "cancelled";
 
 export interface OrderItem {
   product: Product;

@@ -31,7 +31,7 @@ export interface Shop {
   products: string | Product[]; // ids or products
 }
 
-type OrderStatus = "pending" | "completed" | "cancelled";
+type OrderStatus = "pending" | "shipped" | "completed" | "cancelled";
 
 interface OrderItem {
   product: Product;

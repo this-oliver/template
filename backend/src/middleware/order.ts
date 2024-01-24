@@ -6,6 +6,10 @@ import type { Request, Response } from 'express';
 
 async function postOrder(req: Request, res: Response) {
 	const body = req.body as Order;
+
+	if(body.items.length === 0){
+		return res.status(400).send({ message: 'You cannot create an order with no items.' });
+	}
   
 	try {
 		const order = await OrderData.createOrder(body);
