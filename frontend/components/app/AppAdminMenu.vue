@@ -7,7 +7,7 @@ const authStore = useAuthStore();
 <template>
   <base-btn
     id="admin-menu"
-    color="primary"
+    color="secondary"
   >
     {{ authStore.user ? authStore.user.username : "Admin" }}
   </base-btn>
@@ -15,7 +15,6 @@ const authStore = useAuthStore();
   <v-menu
     activator="#admin-menu"
     open-on-hover
-    color="primary"
   >
     <v-list
       variant="flat"
