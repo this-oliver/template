@@ -6,7 +6,7 @@
     <cart-sidebar-card />
 
     <!-- main content -->
-    <v-main>
+    <v-main id="main-container">
       <v-container>
         <v-row justify="center">
           <v-col
@@ -26,3 +26,9 @@
     <Toaster />
   </v-app>
 </template>
+
+<style scoped>
+#main-container{
+  min-height: 90vh;
+}
+</style>

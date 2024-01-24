@@ -13,17 +13,17 @@ const useNavigationStore = defineStore('navigation', () => {
 			}
 		];
 
-		const publicRoutes: ActionItem[] = [
+		const protectedRoutes: ActionItem[] = [
 			{
-				label: 'login',
-				color: 'primary',
-				to: '/auth/login',
+				label: 'orders',
+				color: 'secondary',
+				to: '/orders',
 			}
 		];
 
 		return authStore.isAuthenticated 
-			? [...base] 
-			: [...base, ...publicRoutes];
+			? [...base, ...protectedRoutes] 
+			: [...base];
 	});
 
 	return { options };
