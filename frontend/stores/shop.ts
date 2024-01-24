@@ -234,12 +234,18 @@ const useOrderStore = defineStore('order', () => {
 	}
 
 	async function indexOrders(): Promise<Order[]> {
-  	orders.value = await get('/orders') as Order[];
+  	orders.value = await get('/orders', { authorization: authStore.accessToken }) as Order[];
   	return orders.value;
 	}
 
 	async function updateOrder(id:string, patchedOrder: Partial<Order>): Promise<Order> {
-  	return await patch(`/orders/${id}`, patchedOrder, { authorization: authStore.accessToken }) as Order;
+  	const order = await patch(`/orders/${id}`, patchedOrder, { authorization: authStore.accessToken }) as Order;
+
+		// update orders
+		const index = orders.value.findIndex((order) => order._id === id);
+		orders.value[index] = order;
+
+		return order;
 	}
 
 	async function deleteOrder(id:string): Promise<Order> {

@@ -12,6 +12,7 @@ const routes: Route[] = [
 	{
 		path: BASE_PATH,
 		method: "get",
+		protected: true,
 		handler: [OrderMiddleware.indexOrders],
 	},
 	{
