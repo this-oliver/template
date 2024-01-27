@@ -28,23 +28,45 @@ const paymentPending = computed<boolean>(() => {
 	return props.order.status === 'pending' && props.order.payment?.url !== undefined;
 });
 
-type statusOption = {value: OrderStatus, color: string};
+type statusOption = {value: OrderStatus};
 const statusOptions = computed<statusOption[]>(() => {
 	return [
-		{ value: 'pending', color: 'warning' },
-		{ value: 'shipped', color: 'info' },
-		{ value: 'completed', color: 'success' },
-		{ value: 'cancelled', color: 'error' }
+		{ value: 'shipped' },
+		{ value: 'completed' },
+		{ value: 'cancelled' }
 	];
 });
 
 function isStatusAvailable(status: OrderStatus) {
 	if(props.order.status === 'pending') {
-		return status === 'shipped' || status === 'cancelled';
+		return status === 'cancelled';
+	} else if(props.order.status === 'paid') {
+		return status === 'shipped';
 	} else if(props.order.status === 'shipped') {
 		return status === 'completed';
 	} else {
 		return false;
+	}
+}
+
+function isOrderComplete(status: OrderStatus): boolean {
+	return status === 'completed' || status === 'cancelled' || status === 'failed';
+}
+
+function getStatusColor(status: OrderStatus) {
+	switch(status) {
+	case 'pending':
+		return 'warning';
+	case 'paid':
+		return 'success';
+	case 'shipped':
+		return 'info';
+	case 'completed':
+		return 'primary';
+	case 'cancelled':
+		return 'error';
+	default:
+		return 'grey';
 	}
 }
 
@@ -68,7 +90,7 @@ async function updateStatus(status: OrderStatus) {
       <div>{{ props.order.customer.email }}</div>
       <v-chip
         size="small"
-        :color="statusOptions.find(option => option.value === props.order.status)?.color || 'grey'"
+        :color="getStatusColor(props.order.status)"
       >
         {{ props.order.status }}
       </v-chip>
@@ -112,6 +134,7 @@ async function updateStatus(status: OrderStatus) {
         class="mx-1"
         color="secondary"
         size="small"
+        :disabled="isOrderComplete(props.order.status)"
       >
         Update Status
 
@@ -120,7 +143,7 @@ async function updateStatus(status: OrderStatus) {
             <v-list-item
               v-for="option in statusOptions"
               :key="option.value"
-              :color="!isStatusAvailable(option.value) ? 'grey lighten-2' : option.color"
+              :color="!isStatusAvailable(option.value) ? 'grey lighten-2' : getStatusColor(option.value)"
               :disabled="!isStatusAvailable(option.value) || loading"
               active
               @click="updateStatus(option.value)"
