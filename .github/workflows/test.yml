@@ -1,7 +1,7 @@
 # This workflow is a simple ci/cd pipeline that runs some tests and will deploy the
 # project
 
-name: CI
+name: Test
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
+  test-backend:
     runs-on: ubuntu-latest
 
     strategy:
@@ -27,8 +27,8 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     
-    - name: Check into server directory
-      run: cd server
+    - name: Change directory to backend
+      run: cd backend
 
     - name: Install pnpm
       run: npm install -g pnpm@${{ matrix.pnpm-version }}
