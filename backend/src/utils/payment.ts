@@ -14,9 +14,6 @@ import Stripe from 'stripe';
 import * as OrderData from '../data/order';
 import * as ProductData from '../data/product';
 import type { Currency, Product, OrderItem, OrderStatus } from '../types/logic';
-import type { Document } from 'mongoose';
-
-type ProductDoc = Product & Document;
 
 class Payment {
 	stripe: Stripe;
@@ -27,7 +24,7 @@ class Payment {
 
 	private async createStripeProduct(request: { product: Product, currency: Currency}): Promise<{product: Stripe.Product, price: Stripe.Price}> {
 		// if product already exists, return its id
-		const existingProduct = await this.stripe.products.list({ limit: 1, ids: [(request.product as ProductDoc)._id] });
+		const existingProduct = await this.stripe.products.list({ limit: 1, ids: [request.product._id] });
 		if(existingProduct.data.length > 0){
 			const price = await this.stripe.prices.list({ product: existingProduct.data[0].id, limit: 1 });
 			return { product: existingProduct.data[0], price: price.data[0] };
@@ -35,7 +32,7 @@ class Payment {
     
 		// create product
 		const product = await this.stripe.products.create({
-			id: (request.product as ProductDoc)._id,
+			id: request.product._id,
 			name: request.product.name,
 			images: request.product.images.map(image => image.src)
 		});
@@ -52,7 +49,7 @@ class Payment {
 
 	private async updateStripeProduct(request: { product: Product}): Promise<Stripe.Product> {
 		if(!request.product.stripe){
-			throw new Error(`Missing strip id required to update details for product with id ${(request.product as ProductDoc)._id}`);
+			throw new Error(`Missing strip id required to update details for product with id ${request.product._id}`);
 		}
     
 		return await this.stripe.products.update(
@@ -100,13 +97,13 @@ class Payment {
 
 						// save stripe product id to product
 						item.product = (await ProductData.updateProduct(
-							(item.product as Document & Product)._id,
+							item.product._id,
 							{ stripe: product.id }
 						)) as Product;
 					} catch (error) {
 						throw new Error(
 							`Failed to create a Stripe Product for product with id ${
-								(item.product as Document & Product)._id
+								item.product._id
 							}: ${(error as Error).message}`
 						);
 					}
@@ -116,7 +113,7 @@ class Payment {
 				else {
 					try {
 						const product = await ProductData.getProductById(
-							(item.product as Document & Product)._id
+							item.product._id
 						);
 						const stripeProduct: Stripe.Product =
 							await this.stripe.products.retrieve(item.product.stripe);
@@ -124,7 +121,7 @@ class Payment {
 						if (!product) {
 							throw new Error(
 								`Failed to get product with id ${
-									(item.product as Document & Product)._id
+									item.product._id
 								} for Stripe Payment`
 							);
 						}
@@ -132,7 +129,7 @@ class Payment {
 						if (!stripeProduct) {
 							throw new Error(
 								`Failed to get corresponding Stripe Product for product with id ${
-									(item.product as Document & Product)._id
+									item.product._id
 								}`
 							);
 						}
@@ -173,7 +170,7 @@ class Payment {
 					} catch (error) {
 						throw new Error(
 							`Failed to update a Stripe Product for product with id ${
-								(item.product as Document & Product)._id
+								item.product._id
 							}: ${(error as Error).message}`
 						);
 					}
@@ -182,7 +179,7 @@ class Payment {
 				if (!productStripePriceId) {
 					throw new Error(
 						`Failed to get Stripe Price id for product with id ${
-							(item.product as Document & Product)._id
+							item.product._id
 						}`
 					);
 				}

@@ -1,11 +1,9 @@
 import Mongoose from "mongoose";
 import { Schema } from "mongoose";
 import { createSlug } from "../utils/slug";
-import type { Product as IProduct } from "../types/logic";
+import type { Product } from "../types/logic";
 
-type ProductDocument = IProduct & Mongoose.Document;
-
-const ProductModel = Mongoose.model("product", new Mongoose.Schema<ProductDocument>(
+const ProductModel = Mongoose.model("product", new Mongoose.Schema<Product>(
 	{
 		shop: { type: Schema.Types.ObjectId, ref: "shop" },
 		name: { type: String, required: true },
@@ -26,11 +24,11 @@ const ProductModel = Mongoose.model("product", new Mongoose.Schema<ProductDocume
 	})
 );
 
-async function createProduct(product: IProduct): Promise<ProductDocument> {
+async function createProduct(product: Omit<Product, keyof Mongoose.Document>): Promise<Product> {
 	return await ProductModel.create(new ProductModel(product));
 }
 
-async function getProductById(id: string): Promise<ProductDocument | null> {
+async function getProductById(id: string): Promise<Product | null> {
 	// could be either an id or a slug
 	const isObjectId = Mongoose.isValidObjectId(id);
   
@@ -39,15 +37,15 @@ async function getProductById(id: string): Promise<ProductDocument | null> {
 		: await ProductModel.findOne({ slug: id }).exec();
 }
 
-async function indexProducts(): Promise<ProductDocument[]> {
+async function indexProducts(): Promise<Product[]> {
 	return await ProductModel.find().exec();
 }
 
-async function indexProductsByShop(shopId: string): Promise<ProductDocument[]> {
+async function indexProductsByShop(shopId: string): Promise<Product[]> {
 	return await ProductModel.find({ shop: shopId }).exec();
 }
 
-async function updateProduct(id: string, patch: Partial<IProduct>): Promise<ProductDocument | null> {
+async function updateProduct(id: string, patch: Partial<Product>): Promise<Product | null> {
 	const product = await getProductById(id);
 
 	if(!product){
@@ -72,7 +70,7 @@ async function updateProduct(id: string, patch: Partial<IProduct>): Promise<Prod
 	return await product.save();
 }
 
-async function deleteProduct(id: string): Promise<ProductDocument | null> {
+async function deleteProduct(id: string): Promise<Product | null> {
 	const product = await getProductById(id);
 
 	if(!product){
@@ -83,7 +81,6 @@ async function deleteProduct(id: string): Promise<ProductDocument | null> {
 }
 
 export {
-	ProductDocument,
 	ProductModel,
 	createProduct,
 	getProductById,
