@@ -27,6 +27,10 @@ const BUCKET_SECRET: string = process.env.BUCKET_SECRET as string; // aws
 const BUCKET_ID: string = process.env.BUCKET_ID as string; // gcp
 const BUCKET_KEY_PATH: string = process.env.BUCKET_KEY_PATH as string; // gcp
 
+// Payment
+const STRIPE_SECRET: string = process.env.STRIPE_SECRET as string;
+const STRIPE_ENDPOINT_SECRET: string = process.env.STRIPE_ENDPOINT_SECRET as string;
+
 export {
 	NODE_ENV,
 	PORT,
@@ -38,5 +42,7 @@ export {
 	BUCKET_KEY,
 	BUCKET_SECRET,
 	BUCKET_ID,
-	BUCKET_KEY_PATH
+	BUCKET_KEY_PATH,
+	STRIPE_SECRET,
+	STRIPE_ENDPOINT_SECRET
 };

@@ -1,18 +1,49 @@
+import mongoose from 'mongoose';
 import * as OrderData from '../data/order';
+import { STRIPE_SECRET } from '../config/env';
 import { verifyOrderOwner } from './helpers/authorization';
+import { Payment } from '../utils/payment';
 import type { Order } from '../types/logic';
 import type { AuthenticatedRequest } from '../types/infrastructure';
 import type { Request, Response } from 'express';
 
-async function postOrder(req: Request, res: Response) {
-	const body = req.body as Order;
+const payment = new Payment(STRIPE_SECRET);
 
-	if(body.items.length === 0){
+async function postOrder(req: Request, res: Response) {
+	const orderRequest = req.body.order as Order;
+	let returnUrl = req.body.returnUrl as string;
+
+	if(orderRequest.items.length === 0){
 		return res.status(400).send({ message: 'You cannot create an order with no items.' });
 	}
-  
+
+	if(!returnUrl){
+		return res.status(400).send({ message: 'You must provide a success url for the order.' });
+	}
+
+	// create an id for the order which will be used to identify the order in the checkout session
+	const orderId: string = new mongoose.Types.ObjectId().toString();
+
+	// append order id to success url
+	returnUrl += `?order=${orderId}`;
+
+	// create a checkout session for the order
 	try {
-		const order = await OrderData.createOrder(body);
+		const { sessionId, sessionUrl } = await payment.createPaymentSession({
+			items: orderRequest.items,
+			currency: orderRequest.currency,
+			email: orderRequest.customer.email,
+			returnUrl
+		});
+    
+		orderRequest.payment = { id: sessionId, url: sessionUrl };
+	} catch (error) {
+		return res.status(400).send({ message: (error as Error).message });
+	}
+
+	// create order
+	try {
+		const order = await OrderData.createOrder(orderRequest, orderId);
 		return res.status(201).send(order);
 	} catch (error) {
 		return res.status(400).send({ message: (error as Error).message });

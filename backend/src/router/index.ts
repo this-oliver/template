@@ -4,6 +4,7 @@ import { routes as userRoutes } from "./user";
 import { routes as shopRoutes } from "./shop";
 import { routes as productRoutes } from "./product";
 import { routes as orderRoutes } from "./order";
+import { routes as webhookRoutes } from "./webhook";
 import { verifyAccessToken } from "../middleware/auth";
 import { parseFile } from "../utils/parser";
 import type { Route } from "../types/infrastructure";
@@ -15,7 +16,8 @@ const routes: Route[] = [
 	...userRoutes,
 	...shopRoutes,
 	...productRoutes,
-	...orderRoutes
+	...orderRoutes,
+	...webhookRoutes
 ];
 
 /**
