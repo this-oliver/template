@@ -13,6 +13,7 @@ const ProductModel = Mongoose.model("product", new Mongoose.Schema<ProductDocume
 		price: { type: Number, required: true },
 		quantity: { type: Number, required: true },
 		slug: { type: String, default: "" },
+		stripe: { type: String },
 		images: [{
 			src: { type: String, required: true },
 			alt: { type: String, required: true }
@@ -56,6 +57,7 @@ async function updateProduct(id: string, patch: Partial<IProduct>): Promise<Prod
 	product.name = patch.name || product.name;
 	product.description = patch.description || product.description;
 	product.images = patch.images || product.images;
+	product.stripe = patch.stripe || product.stripe;
   
 	// if the price is not defined in the patch, do not update it
 	if(patch.price !== undefined){

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { OrderItem, Product, Image } from '~/types';
+import type { OrderItem, Product, Image, Currency } from '~/types';
 
 const props = defineProps({
 	items: {
@@ -7,7 +7,7 @@ const props = defineProps({
 		required: true
 	},
 	currency: {
-		type: String,
+		type: String as PropType<Currency>,
 		required: true
 	}
 });

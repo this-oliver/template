@@ -6,6 +6,10 @@ const props = defineProps({
 	order: {
 		type: Object as PropType<Order>,
 		required: true
+	},
+	admin: {
+		type: Boolean,
+		default: false
 	}
 });
 
@@ -18,6 +22,10 @@ const loading = ref(false);
 const total = computed<string>(() => {
 	const total = props.order.items.reduce((acc, item) => acc + item.product.price, 0);
 	return `${total.toFixed(2)} ${props.order.currency || 'n/a'}`;
+});
+
+const paymentPending = computed<boolean>(() => {
+	return props.order.status === 'pending' && props.order.payment?.url !== undefined;
 });
 
 type statusOption = {value: OrderStatus, color: string};
@@ -88,8 +96,19 @@ async function updateStatus(status: OrderStatus) {
       </base-btn>
 
       <v-spacer />
+
+      <base-btn
+        v-if="paymentPending"
+        class="mx-1"
+        color="success"
+        size="small"
+        :href="props.order.payment?.url"
+      >
+        Pay Now
+      </base-btn>
       
       <base-btn
+        v-if="props.admin"
         class="mx-1"
         color="secondary"
         size="small"

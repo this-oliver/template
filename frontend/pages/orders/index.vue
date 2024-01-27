@@ -27,7 +27,10 @@ onMounted(async () => {
         cols="12"
         md="8"
       >
-        <order-card :order="order" />
+        <order-card
+          :order="order"
+          :admin="true"
+        />
       </v-col>
     </v-row>
   </base-page>

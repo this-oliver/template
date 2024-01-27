@@ -16,7 +16,7 @@ const orderStore = useOrderStore();
 const productStore = useProductStore();
 const { notify } = useNotification();
 
-const form = reactive<Omit<Order, '_id'>>({
+const form = reactive<Omit<Order, '_id' | 'payment'>>({
 	status: 'pending',
 	currency: productStore.currency,
 	customer: { email: '' },
@@ -44,7 +44,11 @@ const options = computed<ActionItem[]>(() => {
 			color: 'success',
 			action: async () => {
 				try {
-					const order: Order = await orderStore.createOrder(form);
+					// create url that will be used to redirect the user after payment
+					const returnUrl: string = window.location.origin + '/checkout/session';
+
+					// create order
+					const order: Order = await orderStore.createOrder(form, returnUrl);
 					emit('created', order);
 				} catch (error) {
 					notify('Order Error', (error as Error).message, 'error');

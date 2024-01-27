@@ -31,16 +31,29 @@ export interface Shop extends Document {
   products: string | Product[]; // ids or products
 }
 
-export type OrderStatus = "pending" | "shipped" | "completed" | "cancelled";
+/**
+ * Currency Code (see https://en.wikipedia.org/wiki/ISO_4217)
+ * 
+ * Limited to the following currencies:
+ * 
+ * - EUR - Euro (default)
+ * - SEK - Swedish Krona
+ * - USD - US Dollar
+ * - GBP - British Pound
+ */
+export type Currency = "EUR" | "SEK" | "USD" | "GBP";
 
 export interface OrderItem {
   product: Product;
   quantity: number
-};
+}
+
+export type OrderStatus = "pending" | "paid" | "shipped" | "completed" | "cancelled" | "failed";
 
 export interface Order extends Document {
-  customer: { email: string; };
-  status: OrderStatus;
-  currency: string;
   items: OrderItem[];
+  status: OrderStatus;
+  currency: Currency;
+  customer: { email: string; };
+  payment?: { id: string; url: string; };
 }

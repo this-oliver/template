@@ -22,26 +22,40 @@ export interface Product {
   quantity: number;
   images: Image[];
   slug: string;
+  stripe?: string; // stripe id
 }
+
+/**
+ * Currency Code (see https://en.wikipedia.org/wiki/ISO_4217)
+ * 
+ * Limited to the following currencies:
+ * 
+ * - EUR - Euro (default)
+ * - SEK - Swedish Krona
+ * - USD - US Dollar
+ * - GBP - British Pound
+ */
+export type Currency = "EUR" | "SEK" | "USD" | "GBP";
 
 export interface Shop {
   owner: string | ObjectId; // user id
   name: string;
   description: string;
   products: string | Product[]; // ids or products
+  //currency: Currency;
 }
 
-type OrderStatus = "pending" | "shipped" | "completed" | "cancelled";
-
-interface OrderItem {
+export interface OrderItem {
   product: Product;
   quantity: number
 }
 
-// TODO: add shipping address, tracking number, etc.
+export type OrderStatus = "pending" | "paid" | "shipped" | "completed" | "cancelled" | "failed";
+
 export interface Order {
-  customer: { email: string; };
-  status: OrderStatus;
   items: OrderItem[];
-  currency: string;
+  status: OrderStatus;
+  currency: Currency;
+  customer: { email: string; };
+  payment?: { id: string; url: string; };
 }

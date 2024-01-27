@@ -1,6 +1,7 @@
 import Mongoose from "mongoose";
 import * as ProductData from "./product";
 import type { Order as IOrder } from "../types/logic";
+import type { ObjectId } from "mongoose";
 
 type OrderDocument = IOrder & Mongoose.Document;
 
@@ -8,6 +9,7 @@ const OrderModel = Mongoose.model("order", new Mongoose.Schema<OrderDocument>(
 	{
 		status: { type: String, required: true },
 		customer: { email: { type: String, required: true } },
+		payment: { id: { type: String }, url: { type: String } },
 		currency: { type: String, required: true },
 		items: [{
 			quantity: { type: Number, required: true },
@@ -41,7 +43,7 @@ async function syncStocks(type: "remove" | "restore", order: OrderDocument): Pro
 	}
 }
 
-async function createOrder(order: IOrder): Promise<OrderDocument> {
+async function createOrder(order: IOrder, id?: string | ObjectId): Promise<OrderDocument> {
 	
 	// check if the ordered items are in stock
 	for(const item of order.items){
@@ -59,7 +61,12 @@ async function createOrder(order: IOrder): Promise<OrderDocument> {
 		}
 	}
   
-	const newOrder = await OrderModel.create(new OrderModel(order));
+	// if an id is provided, check if it is valid and not already in use
+	const isValidObjectId: boolean = Mongoose.isValidObjectId(id) && (await OrderModel.findById(id).exec() === null);
+  
+	const newOrder = isValidObjectId
+		? await OrderModel.create(new OrderModel({ ...order, _id: id }))
+		: await OrderModel.create(new OrderModel(order));
 
 	// update the stock of the products
 	await syncStocks("remove", newOrder);
@@ -69,6 +76,10 @@ async function createOrder(order: IOrder): Promise<OrderDocument> {
 
 async function getOrderById(id: string): Promise<OrderDocument | null> {
 	return await OrderModel.findById(id).exec();
+}
+
+async function getOrderByPaymentId(id: string): Promise<OrderDocument | null> {
+	return await OrderModel.findOne({ "payment.id": id }).exec();
 }
 
 async function indexOrders(): Promise<OrderDocument[]> {
@@ -104,6 +115,7 @@ export {
 	OrderModel,
 	createOrder,
 	getOrderById,
+	getOrderByPaymentId,
 	indexOrders,
 	updateOrder,
 	deleteOrder

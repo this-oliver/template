@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { useAuthStore } from '~/stores/auth';
 import { useRequest } from '~/composables/useRequest';
-import type { Shop, Product, Order, NewImage, OrderItem } from '~/types';
+import type { Shop, Product, Order, NewImage, OrderItem, Currency } from '~/types';
 
 /**
  * Returns a FormData object with two lists for the files `files-${index}` and
@@ -86,7 +86,7 @@ const useProductStore = defineStore('product', () => {
 	const authStore = useAuthStore();
 	const shopStore = useShopStore();
 
-	const currency = ref<string>('SEK');
+	const currency = ref<Currency>('SEK');
 	const products = ref<Product[]>([]);
 
 	async function createProduct(newProduct:Partial<Product>, newImages: NewImage[]): Promise<Product> {
@@ -219,8 +219,8 @@ const useOrderStore = defineStore('order', () => {
   	productStore.products[productIndex].quantity ++;
 	}
 
-	async function createOrder(order: Partial<Order>): Promise<Order> {
-  	const newOrder = await post('/orders', order) as Order;
+	async function createOrder(order: Partial<Order>, returnUrl: string): Promise<Order> {
+  	const newOrder = await post('/orders', { order, returnUrl }) as Order;
 
 		if(newOrder){
 			cartItems.value = [];

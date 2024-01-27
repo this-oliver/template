@@ -31,7 +31,7 @@ const orderStore = useOrderStore();
         color="success"
         size="large"
         block
-        to="/orders/checkout"
+        to="/checkout"
       >
         Checkout
       </base-btn>
