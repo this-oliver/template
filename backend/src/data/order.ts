@@ -1,5 +1,5 @@
 import Mongoose from "mongoose";
-import { ProductDocument, ProductModel, getProductById } from "./product";
+import * as ProductData from "./product";
 import type { Order as IOrder } from "../types/logic";
 
 type OrderDocument = IOrder & Mongoose.Document;
@@ -11,21 +11,44 @@ const OrderModel = Mongoose.model("order", new Mongoose.Schema<OrderDocument>(
 		currency: { type: String, required: true },
 		items: [{
 			quantity: { type: Number, required: true },
-			product: { type: ProductModel.schema, required: true }
+			product: { type: ProductData.ProductModel.schema, required: true }
 		}]
 	},
 	{ timestamps: true }
 ));
 
+/**
+ * Synchronizes the stock of the products in the order with the database.
+ * 
+ * @param type - Whether to remove or restore the stock
+ * @param order - The order to synchronize
+ */
+async function syncStocks(type: "remove" | "restore", order: OrderDocument): Promise<void> {
+  
+	for(const item of order.items){
+		const id: string = (item.product as ProductData.ProductDocument)._id;
+		const product = await ProductData.getProductById(id);
+
+		if(!product){
+			throw new Error(`Failed to get and update stock for product with id ${id}`);
+		}
+
+		const updatedQuantity: number = type === "remove" 
+			? product.quantity - item.quantity 
+			: product.quantity + item.quantity;
+
+		await ProductData.updateProduct(id, { quantity: updatedQuantity });
+	}
+}
+
 async function createOrder(order: IOrder): Promise<OrderDocument> {
 	
 	// check if the ordered items are in stock
 	for(const item of order.items){
-		const id: string = (item.product as ProductDocument)._id;
+		const id: string = (item.product as ProductData.ProductDocument)._id;
     
-		// use the product in the database to check if it exists and has enough stock
-		// instead of the product in the order (which may be outdated, non-existent or manipulated)
-		const product = await getProductById(id);
+		// use product in the database to cross-reference the stock
+		const product = await ProductData.getProductById(id);
 
 		if(!product){
 			throw new Error(`Product with id ${id} not found`);
@@ -39,17 +62,7 @@ async function createOrder(order: IOrder): Promise<OrderDocument> {
 	const newOrder = await OrderModel.create(new OrderModel(order));
 
 	// update the stock of the products
-	for(const item of newOrder.items){
-		const id: string = (item.product as ProductDocument)._id;
-		const product = await getProductById(id);
-
-		if(!product){
-			throw new Error(`Failed to get and update stock for product with id ${id}`);
-		}
-
-		product.quantity -= item.quantity;
-		await product.save();
-	}
+	await syncStocks("remove", newOrder);
 
 	return newOrder;
 }
@@ -72,7 +85,14 @@ async function updateOrder(id: string, patch: Partial<IOrder>): Promise<OrderDoc
 
 	order.status = patch.status || order.status;
 
-	return await order.save();
+	const updatedOrder = await order.save();
+
+	// update the stock of the products if the order is cancelled
+	if(updatedOrder.status === "cancelled"){
+		await syncStocks("restore", updatedOrder);
+	}
+
+	return updatedOrder;
 }
 
 async function deleteOrder(id: string): Promise<OrderDocument | null> {
