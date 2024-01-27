@@ -1,11 +1,9 @@
 import Mongoose from "mongoose";
 import * as ProductData from "./product";
-import type { Order as IOrder } from "../types/logic";
+import type { Order, Product } from "../types/logic";
 import type { ObjectId } from "mongoose";
 
-type OrderDocument = IOrder & Mongoose.Document;
-
-const OrderModel = Mongoose.model("order", new Mongoose.Schema<OrderDocument>(
+const OrderModel = Mongoose.model("order", new Mongoose.Schema<Order>(
 	{
 		status: { type: String, required: true },
 		customer: { email: { type: String, required: true } },
@@ -25,10 +23,10 @@ const OrderModel = Mongoose.model("order", new Mongoose.Schema<OrderDocument>(
  * @param type - Whether to remove or restore the stock
  * @param order - The order to synchronize
  */
-async function syncStocks(type: "remove" | "restore", order: OrderDocument): Promise<void> {
+async function syncStocks(type: "remove" | "restore", order: Order): Promise<void> {
   
 	for(const item of order.items){
-		const id: string = (item.product as ProductData.ProductDocument)._id;
+		const id: string = (item.product as Product)._id;
 		const product = await ProductData.getProductById(id);
 
 		if(!product){
@@ -43,11 +41,11 @@ async function syncStocks(type: "remove" | "restore", order: OrderDocument): Pro
 	}
 }
 
-async function createOrder(order: IOrder, id?: string | ObjectId): Promise<OrderDocument> {
+async function createOrder(order: Omit<Order, keyof Mongoose.Document>, id?: string | ObjectId): Promise<Order> {
 	
 	// check if the ordered items are in stock
 	for(const item of order.items){
-		const id: string = (item.product as ProductData.ProductDocument)._id;
+		const id: string = (item.product as Product)._id;
     
 		// use product in the database to cross-reference the stock
 		const product = await ProductData.getProductById(id);
@@ -74,20 +72,20 @@ async function createOrder(order: IOrder, id?: string | ObjectId): Promise<Order
 	return newOrder;
 }
 
-async function getOrderById(id: string): Promise<OrderDocument | null> {
+async function getOrderById(id: string): Promise<Order | null> {
 	return await OrderModel.findById(id).exec();
 }
 
-async function getOrderByPaymentId(id: string): Promise<OrderDocument | null> {
+async function getOrderByPaymentId(id: string): Promise<Order | null> {
 	return await OrderModel.findOne({ "payment.id": id }).exec();
 }
 
-async function indexOrders(): Promise<OrderDocument[]> {
+async function indexOrders(): Promise<Order[]> {
 	return await OrderModel.find()
 		.exec();
 }
 
-async function updateOrder(id: string, patch: Partial<IOrder>): Promise<OrderDocument | null> {
+async function updateOrder(id: string, patch: Partial<Order>): Promise<Order | null> {
 	const order = await getOrderById(id);
 
 	if(!order){
@@ -106,12 +104,11 @@ async function updateOrder(id: string, patch: Partial<IOrder>): Promise<OrderDoc
 	return updatedOrder;
 }
 
-async function deleteOrder(id: string): Promise<OrderDocument | null> {
+async function deleteOrder(id: string): Promise<Order | null> {
 	throw new Error(`Orders cannot be deleted. Ref: ${id}`);
 }
 
 export {
-	OrderDocument,
 	OrderModel,
 	createOrder,
 	getOrderById,

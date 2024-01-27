@@ -1,7 +1,7 @@
 import * as UserData from "../data/user";
 import { generateWebTokens, getToken, comparePasswords } from "../utils/crypto";
 import { createErrorResponse } from "./helpers/error";
-import type { UserDocument } from "../data/user";
+import type { User } from "../types/logic";
 import type { AuthenticatedRequest } from "../types/infrastructure";
 import type { Request, Response, NextFunction } from "express";
 
@@ -14,7 +14,7 @@ import type { Request, Response, NextFunction } from "express";
 async function login(req: Request, res: Response) {
 	const { username, password } = req.body;
   
-	const user: UserDocument | null = await UserData.getUserByUsername(username, { secrets: true });
+	const user: User | null = await UserData.getUserByUsername(username, { secrets: true });
 	if(!user){
 		return createErrorResponse(res, 'Invalid authentication credentials.', 401);
 	}
@@ -49,7 +49,7 @@ async function verifyAccessToken(req: Request, res: Response, next: NextFunction
 		return createErrorResponse(res, 'Invalid auth token.', 401);
 	}
   
-	const user: UserDocument | null = await UserData.getUserById(decodedToken, { secrets: true });
+	const user: User | null = await UserData.getUserById(decodedToken, { secrets: true });
 	if(!user){
 		return createErrorResponse(res, `User with id ${decodedToken} missing.`, 401);
 	}
@@ -82,7 +82,7 @@ async function refreshAccessToken(req: Request, res: Response) {
 		return createErrorResponse(res, 'Invalid access token.', 401);
 	}
 
-	const user: UserDocument | null = await UserData.getUserById(userId);
+	const user: User | null = await UserData.getUserById(userId);
 	if(!user){
 		return createErrorResponse(res, `User with id ${userId} missing.`, 401);
 	}

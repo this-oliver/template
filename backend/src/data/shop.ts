@@ -2,11 +2,9 @@ import Mongoose from "mongoose";
 import { Schema } from "mongoose";
 import { indexOrders } from "./order";
 import { indexProductsByShop } from "./product";
-import type { Shop as IShop } from "../types/logic";
+import type { Shop } from "../types/logic";
 
-type ShopDocument = IShop & Mongoose.Document;
-
-const ShopModel = Mongoose.model("shop", new Mongoose.Schema<ShopDocument>(
+const ShopModel = Mongoose.model("shop", new Mongoose.Schema<Shop>(
 	{
 		owner: { type: Schema.Types.ObjectId, ref: "user" },
 		name: { type: String, required: true },
@@ -16,23 +14,23 @@ const ShopModel = Mongoose.model("shop", new Mongoose.Schema<ShopDocument>(
 	{ timestamps: true }
 ));
 
-async function createShop(shop: IShop): Promise<ShopDocument> {
+async function createShop(shop: Omit<Shop, keyof Mongoose.Document>): Promise<Shop> {
 	return await ShopModel.create(new ShopModel(shop));
 }
 
-async function getShopById(id: string): Promise<ShopDocument | null> {
+async function getShopById(id: string): Promise<Shop | null> {
 	return await ShopModel.findById(id).exec();
 }
 
-async function indexShops(): Promise<ShopDocument[]> {
+async function indexShops(): Promise<Shop[]> {
 	return await ShopModel.find().exec();
 }
 
-async function indexShopsByOwner(owner: string): Promise<ShopDocument[]> {
+async function indexShopsByOwner(owner: string): Promise<Shop[]> {
 	return await ShopModel.find({ owner }).exec();
 }
 
-async function updateShop(id: string, patch: Partial<IShop>): Promise<ShopDocument | null> {
+async function updateShop(id: string, patch: Partial<Shop>): Promise<Shop | null> {
 	const shop = await getShopById(id);
 
 	if(!shop){
@@ -42,7 +40,7 @@ async function updateShop(id: string, patch: Partial<IShop>): Promise<ShopDocume
 	return await ShopModel.findByIdAndUpdate(id, patch, { new: true }).exec();
 }
 
-async function deleteShop(id: string): Promise<ShopDocument | null> {
+async function deleteShop(id: string): Promise<Shop | null> {
 	const shop = await getShopById(id);
 
 	if(!shop){
@@ -68,7 +66,6 @@ async function deleteShop(id: string): Promise<ShopDocument | null> {
 }
 
 export {
-	ShopDocument,
 	ShopModel,
 	createShop,
 	getShopById,

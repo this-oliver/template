@@ -32,14 +32,9 @@ export interface Shop extends Document {
 }
 
 /**
- * Currency Code (see https://en.wikipedia.org/wiki/ISO_4217)
+ * Currency Code (see https://en.wikipedia.org/wiki/ISO_4217).
  * 
- * Limited to the following currencies:
- * 
- * - EUR - Euro (default)
- * - SEK - Swedish Krona
- * - USD - US Dollar
- * - GBP - British Pound
+ * Note: currently limited to the following currencies: EUR, SEK, USD, GBP
  */
 export type Currency = "EUR" | "SEK" | "USD" | "GBP";
 

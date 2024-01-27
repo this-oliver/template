@@ -1,13 +1,10 @@
 import Mongoose from "mongoose";
 import { hashPassword } from "../utils/crypto";
-
-import type { User as IUser } from "../types/logic";
+import type { User } from "../types/logic";
 
 const GENERIC_PROJECTION = "-password";
 
-type UserDocument = IUser & Mongoose.Document;
-
-const UserModel = Mongoose.model("user", new Mongoose.Schema<IUser>(
+const UserModel = Mongoose.model("user", new Mongoose.Schema<User>(
 	{
 		username: { type: String, required: true, unique: true },
 		password: { type: String, required: true }
@@ -22,7 +19,7 @@ const UserModel = Mongoose.model("user", new Mongoose.Schema<IUser>(
 	})
 );
 
-async function createUser(user: IUser, config?: { secrets: boolean }): Promise<UserDocument> {
+async function createUser(user: Omit<User, keyof Mongoose.Document>, config?: { secrets: boolean }): Promise<User> {
 	if(await getUserByUsername(user.username)) {
 		throw new Error(`User with username ${user.username} already exists`);
 	}
@@ -36,25 +33,25 @@ async function createUser(user: IUser, config?: { secrets: boolean }): Promise<U
 	return newUser;
 }
 
-async function getUserById(id: string, config?: { secrets: boolean}): Promise<UserDocument | null> {
+async function getUserById(id: string, config?: { secrets: boolean}): Promise<User | null> {
 	return config?.secrets 
 		? await UserModel.findById(id).exec()
 		: await UserModel.findById(id).select(GENERIC_PROJECTION).exec();
 }
 
-async function getUserByUsername(username: string, config?: { secrets: boolean}): Promise<UserDocument | null> {
+async function getUserByUsername(username: string, config?: { secrets: boolean}): Promise<User | null> {
 	return config?.secrets
 		? await UserModel.findOne({ username }).exec()
 		: await UserModel.findOne({ username }).select(GENERIC_PROJECTION).exec();
 }
 
-async function indexUsers(config?: { secrets: boolean}): Promise<UserDocument[]> {
+async function indexUsers(config?: { secrets: boolean}): Promise<User[]> {
 	return config?.secrets 
 		? await UserModel.find().exec()
 		: await UserModel.find().select(GENERIC_PROJECTION).exec();
 }
 
-async function updateUser(id: string, patch: Partial<IUser>, config?: { secrets: boolean}): Promise<UserDocument | null> {
+async function updateUser(id: string, patch: Partial<User>, config?: { secrets: boolean}): Promise<User | null> {
 	const user = await getUserById(id);
 
 	if(!user){
@@ -72,7 +69,7 @@ async function updateUser(id: string, patch: Partial<IUser>, config?: { secrets:
 	return patchedUser;
 }
 
-async function updateUserPassword(id: string, password: string, config?: { secrets: boolean}): Promise<UserDocument | null> {
+async function updateUserPassword(id: string, password: string, config?: { secrets: boolean}): Promise<User | null> {
 	const user = await getUserById(id, { secrets: true });
 
 	if(!user){
@@ -90,7 +87,7 @@ async function updateUserPassword(id: string, password: string, config?: { secre
 	return patchedUser;
 }
 
-async function deleteUser (id: string): Promise<UserDocument | null> {
+async function deleteUser (id: string): Promise<User | null> {
 	const user = await getUserById(id);
 
 	if(!user){
@@ -101,7 +98,6 @@ async function deleteUser (id: string): Promise<UserDocument | null> {
 }
 
 export { 
-	UserDocument,
 	UserModel,
 	createUser,
 	getUserById,
