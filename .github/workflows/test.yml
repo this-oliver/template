@@ -7,10 +7,13 @@ on:
   push:
     branches: [ main ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, dev ]
+  workflow_dispatch:
 
 jobs:
-  test-backend:
+  backend:
+    name: run tests in backend
+
     runs-on: ubuntu-latest
 
     strategy:
@@ -26,15 +29,13 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    
-    - name: Change directory to backend
-      run: cd backend
 
     - name: Install pnpm
       run: npm install -g pnpm@${{ matrix.pnpm-version }}
 
     - name: Install dependancies
       run: pnpm install --frozen-lockfile --shamefully-hoist
+      working-directory: ./backend
 
     - name: Start MongoDB
       uses: supercharge/mongodb-github-action@1.10.0
@@ -46,3 +47,4 @@ jobs:
         DB_URI: mongodb://localhost:27017/test
         JWT_SECRET: test-secret
       run: pnpm test
+      working-directory: ./backend
