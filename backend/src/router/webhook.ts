@@ -4,9 +4,17 @@ import { STRIPE_SECRET, STRIPE_ENDPOINT_SECRET } from "../config/env";
 import type { Route } from "../types/infrastructure";
 import type { Request, Response } from "express";
 
-const webhook = new Webhook(STRIPE_SECRET, STRIPE_ENDPOINT_SECRET);
+if(!STRIPE_SECRET){
+	throw new Error("Stripe secret is not defined. Set STRIPE_SECRET environment variable.");
+}
 
-async function handleWebhook (req: Request, res: Response): Promise<void> {
+if(!STRIPE_ENDPOINT_SECRET){
+	throw new Error("Stripe endpoint secret is not defined. Set STRIPE_ENDPOINT_SECRET environment variable.");
+}
+
+const webhook: Webhook = new Webhook(STRIPE_SECRET, STRIPE_ENDPOINT_SECRET);  
+
+async function handleWebhook (req: Request, res: Response): Promise<void> {  
 	try {
 		const signature = req.headers['stripe-signature'] as string;
 		const payload = req.body as string | Buffer;

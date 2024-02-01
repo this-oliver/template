@@ -4,17 +4,18 @@
 
 This is a backend template for a REST API that provides a basic CRUD functionality for a personal todo list application with user authentication. It has the following components:
 
+- Authentication (custom)
 - Database (MongoDB)
 - Data Models (Mongoose)
-- Middleware and Routing (Express)
 - File Uploads (Multer)
+- Middleware and Routing (Express)
+- Payment (Stripe)
 - Storage (AWS S3, Google Cloud Storage, Custom)
-- Authentication (custom)
 - Testing (Mocha, Chai, Supertest)
 
-## Usage
+## Installation
 
-> If you want a lightweight version of this template without any database, data models or middleware - just a server with a basic hello world route - you can use the [main-lite](https://github.com/this-oliver/template-backend/tree/main-lite) branch.
+> checkout the [main-lite](https://github.com/this-oliver/template-backend/tree/main-lite) branch for a lightweight version of this template (without any database, data models or middleware).
 
 You can use this template to quickly create a backend for your own application. To get started, you can clone this repository (with a clean git history) as follows:
 
@@ -30,12 +31,22 @@ cd <project-name>
 
 # install dependencies
 pnpm install
-
-# start server in development mode
-pnpm dev
 ```
 
 This will create a new directory called `<project-name>` with the contents of this repository (except for the `.git` directory). In other words, it allows you to start with a clean git history (i.e. no commits).
+
+## Usage
+
+In order to use this template, you need to complete some pre-requisites:
+
+- setup a MongoDB database and get the `connection` string
+- setup a Stripe account and get the `secret key`
+- create a `.env` file in the root of the **backend** directory which implements the [.env.example](.env.example) file
+
+```bash
+# start server in development mode
+pnpm dev
+```
 
 ## Directory Structure
 

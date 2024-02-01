@@ -41,8 +41,8 @@ async function getUserById(id: string, config?: { secrets: boolean}): Promise<Us
 
 async function getUserByUsername(username: string, config?: { secrets: boolean}): Promise<User | null> {
 	return config?.secrets
-		? await UserModel.findOne({ username }).exec()
-		: await UserModel.findOne({ username }).select(GENERIC_PROJECTION).exec();
+		? await UserModel.findOne({ username: { $eq: username } }).exec()
+		: await UserModel.findOne({ username: { $eq: username } }).select(GENERIC_PROJECTION).exec();
 }
 
 async function indexUsers(config?: { secrets: boolean}): Promise<User[]> {

@@ -34,7 +34,7 @@ async function getProductById(id: string): Promise<Product | null> {
   
 	return isObjectId
 		? await ProductModel.findById(id).exec()
-		: await ProductModel.findOne({ slug: id }).exec();
+		: await ProductModel.findOne({ slug: { $eq: id } }).exec();
 }
 
 async function indexProducts(): Promise<Product[]> {
@@ -42,7 +42,7 @@ async function indexProducts(): Promise<Product[]> {
 }
 
 async function indexProductsByShop(shopId: string): Promise<Product[]> {
-	return await ProductModel.find({ shop: shopId }).exec();
+	return await ProductModel.find({ shop: { $eq: shopId } }).exec();
 }
 
 async function updateProduct(id: string, patch: Partial<Product>): Promise<Product | null> {

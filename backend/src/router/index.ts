@@ -50,7 +50,7 @@ routes.forEach((route) => {
  * catch all routes that does not exists
  */
 router.get("/*", (req, res) => {
-	return res.status(400).send(`[*] the resource '${req.url}' does not exists`);
+	return res.status(400).send(`The resource you are looking for does not exists`);
 });
 
 /**

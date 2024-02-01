@@ -1,0 +1,10 @@
+# This is a basic dependabot configuration file for npm.
+
+version: 2
+
+updates:
+  - package-ecosystem: "npm" # setup dependabot for npm
+    directory: "/" # check for updates in the root directory
+    schedule:
+      interval: "daily" # check for updates every day
+    target-branch: "dev" # create pull requests for updates to the "dev" branch

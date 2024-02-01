@@ -7,6 +7,10 @@ import type { Order } from '../types/logic';
 import type { AuthenticatedRequest } from '../types/infrastructure';
 import type { Request, Response } from 'express';
 
+if(!STRIPE_SECRET){
+	throw new Error("Stripe secret is not defined. Set STRIPE_SECRET environment variable.");
+}
+
 const payment = new Payment(STRIPE_SECRET);
 
 async function postOrder(req: Request, res: Response) {

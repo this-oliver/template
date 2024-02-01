@@ -27,7 +27,7 @@ async function indexShops(): Promise<Shop[]> {
 }
 
 async function indexShopsByOwner(owner: string): Promise<Shop[]> {
-	return await ShopModel.find({ owner }).exec();
+	return await ShopModel.find({ owner: { $eq: owner } }).exec();
 }
 
 async function updateShop(id: string, patch: Partial<Shop>): Promise<Shop | null> {
@@ -37,7 +37,10 @@ async function updateShop(id: string, patch: Partial<Shop>): Promise<Shop | null
 		throw new Error(`Shop with id ${id} not found`);
 	}
 
-	return await ShopModel.findByIdAndUpdate(id, patch, { new: true }).exec();
+	shop.name = patch.name || shop.name;
+	shop.description = patch.description || shop.description;
+
+	return await shop.save();
 }
 
 async function deleteShop(id: string): Promise<Shop | null> {

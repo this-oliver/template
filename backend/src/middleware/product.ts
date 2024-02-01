@@ -19,6 +19,10 @@ async function extractImages(req: Request): Promise<Image[]> {
 		return [];
 	}
 
+	if (files.length > 5) {
+		throw new Error('You can only upload up to 5 images.');
+	}
+
 	const bucket = NODE_ENV === "prod"
 		? new GoogleBucket({ bucketName: BUCKET_NAME, projectName: BUCKET_ID, keyPath: BUCKET_KEY_PATH })
 		: new BasicBucket({ endpoint: BUCKET_URL });

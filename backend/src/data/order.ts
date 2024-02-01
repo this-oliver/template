@@ -77,7 +77,7 @@ async function getOrderById(id: string): Promise<Order | null> {
 }
 
 async function getOrderByPaymentId(id: string): Promise<Order | null> {
-	return await OrderModel.findOne({ "payment.id": id }).exec();
+	return await OrderModel.findOne({ "payment.id": { $eq: id } }).exec();
 }
 
 async function indexOrders(): Promise<Order[]> {
