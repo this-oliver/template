@@ -1,6 +1,6 @@
 {
   "name": "template",
-  "version": "0.12.2",
+  "version": "0.12.5",
   "description": "a template for web applications",
   "repository": "this-oliverrr/template",
   "author": "this-oliverrr <hello@oliverrr.net>",
@@ -16,6 +16,9 @@
     "mongodb"
   ],
   "scripts": {
-    "bump": "npx fist-bump"
+    "bump": "npx fist-bump",
+    "docker:up": "docker compose up --build",
+    "docker:down": "docker compose down",
+    "docker:stop": "docker compose stop"
   }
 }

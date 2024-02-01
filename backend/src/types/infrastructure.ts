@@ -4,7 +4,7 @@
  */
 
 import type { Request, RequestHandler } from "express";
-import type { UserDocument } from "../data/user";
+import type { User } from "./logic";
 
 export interface BaseError {
   message: string;
@@ -53,5 +53,5 @@ export interface Route {
 }
 
 export interface AuthenticatedRequest extends Request {
-  user: UserDocument
+  user: User
 }
