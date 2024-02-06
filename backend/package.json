@@ -19,6 +19,7 @@
     "docker:run": "docker run -p 3000:3000 --env-file .env  template-backend:latest"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.504.0",
     "@google-cloud/storage": "^7.5.0",
     "axios": "^1.6.0",
     "bcrypt": "^5.1.1",

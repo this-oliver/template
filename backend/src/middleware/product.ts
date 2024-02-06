@@ -1,7 +1,7 @@
 import * as ProductData from '../data/product';
-import { NODE_ENV, BUCKET_NAME, BUCKET_ID, BUCKET_KEY_PATH, BUCKET_URL,  } from '../config/env';
+import { NODE_ENV, BUCKET_NAME, BUCKET_ID, BUCKET_KEY_PATH, BUCKET_KEY, BUCKET_SECRET, BUCKET_REGION, BUCKET_URL } from '../config/env';
 import { verifyShopOwner, verifyProductOwner } from './helpers/authorization';
-import { BasicBucket, GoogleBucket } from '../utils/storage';
+import { AwsBucket, GcpBucket } from '../utils/storage';
 import type { Product, Image } from '../types/logic';
 import type { AuthenticatedRequest } from '../types/infrastructure';
 import type { Request, Response } from 'express';
@@ -24,8 +24,8 @@ async function extractImages(req: Request): Promise<Image[]> {
 	}
 
 	const bucket = NODE_ENV === "prod"
-		? new GoogleBucket({ bucketName: BUCKET_NAME, projectName: BUCKET_ID, keyPath: BUCKET_KEY_PATH })
-		: new BasicBucket({ endpoint: BUCKET_URL });
+		? new GcpBucket({ bucketName: BUCKET_NAME, projectName: BUCKET_ID, keyPath: BUCKET_KEY_PATH })
+		: new AwsBucket({ bucketName: BUCKET_NAME, secretAccessKey: BUCKET_SECRET, accessKeyId: BUCKET_KEY, bucketRegion: BUCKET_REGION, bucketEndpoint: BUCKET_URL });
   
 	for(let i = 0; i < files.length; i++){
 		const meta = req.body[`files-meta-${i}`];
