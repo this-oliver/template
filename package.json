@@ -1,24 +1,26 @@
 {
   "name": "template",
-  "version": "0.13.0",
+  "version": "0.13.1",
   "description": "a template for web applications",
   "repository": "this-oliverrr/template",
   "author": "this-oliverrr <hello@oliverrr.net>",
   "license": "MIT",
-  "keywords": [
-    "web",
-    "application",
-    "template",
-    "vue",
-    "nuxt",
-    "express",
-    "mongoose",
-    "mongodb"
-  ],
   "scripts": {
     "bump": "npx fist-bump",
     "docker:up": "docker compose up --build",
     "docker:down": "docker compose down",
-    "docker:stop": "docker compose stop"
+    "docker:stop": "docker compose stop",
+    "postinstall": "simple-git-hooks"
+  },
+  "devDependencies": {
+    "lint-staged": "^15.2.2",
+    "simple-git-hooks": "^2.9.0"
+  },
+  "lint-staged": {
+    "frontend/*.ts": "cd frontend && pnpm lint:fix",
+    "backend/*.ts": "cd backend && pnpm lint:fix && pnpm test"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint-staged"
   }
 }
