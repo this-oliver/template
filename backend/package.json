@@ -15,6 +15,7 @@
     "test": "NODE_ENV=test mocha",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
+    "postinstall": "simple-git-hooks",
     "docker:build": "docker build -t template-backend:latest .",
     "docker:run": "docker run -p 3000:3000 --env-file .env  template-backend:latest"
   },
@@ -61,7 +62,7 @@
     "typescript": "^5.2.2"
   },
   "lint-staged": {
-    "*.{ts}": "pnpm lint:fix"
+    "*.ts": "pnpm lint:fix"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged"
