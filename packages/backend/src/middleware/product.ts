@@ -101,10 +101,10 @@ async function patchProduct(req: Request, res: Response) {
 
 	try {
 		// upload images if any
-		const newImages = await extractImages(req);
-		body.images.push(...newImages);
+		const images = body.images || [];
+		images.push(...await extractImages(req));
 
-		const product = await ProductData.updateProduct(id, body);
+		const product = await ProductData.updateProduct(id, { ...body, images });
 		return res.status(200).send(product);
 	} catch (error) {
 		return res.status(400).send({ message: (error as Error).message });
