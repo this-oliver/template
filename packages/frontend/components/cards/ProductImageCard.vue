@@ -28,8 +28,8 @@ const options = computed<{label: string, icon: string, color: string, action: ()
 		update,
 		{
 			label: 'Delete',
-			icon: 'mdi-trash-can-outline',
-			color: 'error',
+			icon: 'i-mdi-trash-can-outline',
+			color: 'bg-error',
 			action: () => emit('delete')
 		}
 	];
