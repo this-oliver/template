@@ -13,8 +13,8 @@
     "start": "node dist/index.js",
     "dev": "NODE_ENV=dev nodemon --exec ts-node src/index.ts",
     "test": "NODE_ENV=test mocha",
-    "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix",
+    "lint": "eslint . --ignore-path .gitignore --ext .ts",
+    "lint:fix": "eslint . --ignore-path .gitignore --ext .ts --fix",
     "postinstall": "simple-git-hooks",
     "docker:build": "docker build -t template-backend:latest .",
     "docker:run": "docker run -p 3000:3000 --env-file .env  template-backend:latest"

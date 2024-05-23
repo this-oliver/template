@@ -2,11 +2,11 @@
 	"folders": [
 		{
 			"name": "frontend",
-			"path": "../frontend"
+			"path": "../packages/frontend"
 		},
 		{
 			"name": "backend",
-			"path": "../backend"
+			"path": "../packages/backend"
 		},
 		{
 			"path": "../.github"

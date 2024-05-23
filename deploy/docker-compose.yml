@@ -2,18 +2,18 @@
 services:
   backend:
     image: template-backend
-    build: ./backend
+    build: ./packages/backend
     ports:
       - "3001:3001"
     env_file:
-      - ./backend/.env
+      - ./packages/backend.env
   
   frontend:
     image: template-frontend
-    build: ./frontend
+    build: ./packages/frontend
     ports:
       - "80:3000"
     env_file:
-      - ./frontend/.env
+      - ./packages/frontend/.env
     depends_on:
       - backend

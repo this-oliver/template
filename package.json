@@ -1,6 +1,6 @@
 {
   "name": "template",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "a template for web applications",
   "repository": "this-oliverrr/template",
   "author": "this-oliverrr <hello@oliverrr.net>",
@@ -17,8 +17,8 @@
     "simple-git-hooks": "^2.9.0"
   },
   "lint-staged": {
-    "frontend/*.ts": "cd frontend && pnpm lint:fix",
-    "backend/*.ts": "cd backend && pnpm lint:fix && pnpm test"
+    "frontend/*.ts": "cd packages/frontend && pnpm lint:fix",
+    "backend/*.ts": "cd packages/backend && pnpm lint:fix && pnpm test"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged"
