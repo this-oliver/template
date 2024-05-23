@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useAuthStore } from '~/stores/auth';
-import { useProductStore } from '~/stores/shop';
+import { useAuthStore } from "~/stores/auth";
+import { useProductStore } from "~/stores/shop";
 
 const authStore = useAuthStore();
 const productStore = useProductStore();
@@ -10,35 +10,28 @@ onMounted(async () => {
 	try {
 		await productStore.init();
 	} catch (error) {
-		notify('Product', (error as Error).message, 'error');
+		notify("Product", (error as Error).message, "error");
 	}
 });
-
 </script>
 
 <template>
   <base-page>
     <base-btn
       v-if="authStore.isAuthenticated"
-      class="mb-2"
-      color="primary"
+      class="mb-2 w-fit"
       to="/products/create"
     >
       Create Product
     </base-btn>
-    
-    <v-row>
-      <v-col
+
+    <div class="flex flex-col md:grid md:grid-cols-2 gap-5 md:gap-2">
+      <product-card
         v-for="product in productStore.products"
         :key="product._id"
-        cols="12"
-        md="6"
-      >
-        <product-card
-          :product="product"
-          :admin="authStore.isAuthenticated"
-        />
-      </v-col>
-    </v-row>
+        :product="product"
+        :admin="authStore.isAuthenticated"
+      />
+    </div>
   </base-page>
 </template>

@@ -1,16 +1,6 @@
 <template>
   <base-page>
-    <landing-hero class="hero" />
-    <landing-features class="section" />
+    <landing-hero class="h-svh" />
+    <landing-features />
   </base-page>
 </template>
-
-<style scoped>
-.hero {
-  height: 90vh;
-}
-
-.section {
-  margin: 3rem 1rem;
-}
-</style>

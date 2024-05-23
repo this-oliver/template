@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { useAuthStore } from '~/stores/auth';
-import { useProductStore } from '~/stores/shop';
+import { useProductStore, useOrderStore } from '~/stores/shop';
 import type { Product, Image } from '~/types';
 
 const route = useRoute();
 const authStore = useAuthStore();
+const orderStore = useOrderStore();
 const productStore = useProductStore();
 
 const product = ref<Product>();
@@ -21,6 +22,18 @@ const images = computed<Image[]>(() => {
 		];
 });
 
+const cartCount = computed<number>(() => {
+	const index = orderStore.cartItems.findIndex(
+		(item) => item.product._id === product.value?._id
+	);
+
+	if (index < 0) {
+		return 0;
+	} else {
+		return orderStore.cartItems[index].quantity;
+	}
+});
+
 onMounted(async () => {
 	const id = route.params.id as string;
 	product.value = await productStore.getProduct(id);
@@ -33,50 +46,54 @@ onMounted(async () => {
       v-if="authStore.isAuthenticated "
       :to="`/products/${product.slug}`"
       class="mb-4"
+      color="bg-warning"
     >
       Edit
     </base-btn>
-  
-    <v-row
-      id="product-container"
-      align="center"
-    >
-      <v-col
-        cols="12"
-        md="5"
-      >
-        <h1>{{ product.name }}</h1>
-        <h2 class="text-grey-darken-2">
+
+    <div class="flex md:grid md:grid-cols-2 gap-2">
+      <div class="flex flex-col">
+        <h1 class="text-xl font-bold">
+          {{ product.name }}
+        </h1>
+        <h2 class="text-lg">
           {{ product.price }} <small class="text-grey-darken-1">{{ productStore.currency }}</small>
         </h2>
         <p>{{ product.description }}</p>
-      </v-col>
 
-      <v-col
-        cols="12"
-        md="7"
-      >
-        <v-carousel>
-          <v-carousel-item
-            v-for="image in images"
-            :key="image.src"
-            :src="image.src"
-            :alt="image.alt"
-            width="100%"
-            cover
-          />
-        </v-carousel>
-      </v-col>
-    </v-row>
+        <div class="mt-2 flex">
+          <base-btn
+            class="text-sm"
+            color="bg-warning"
+            :disabled="cartCount === 0"
+            @click="orderStore.removeFromCart(product)"
+          >
+            <span class="i-mdi-minus" />
+          </base-btn>
+
+          <p
+            class="text-center basis-1/4"
+            style="width: 100%"
+          >
+            {{ cartCount }}
+          </p>
+
+          <base-btn
+            class="text-sm"
+            color="bg-success"
+            :disabled="product.quantity === 0"
+            @click="orderStore.addToCart(product)"
+          >
+            <span class="i-mdi-plus" />
+          </base-btn>
+        </div>
+      </div>
+
+      <base-carousel :images="images" />
+    </div>
   </base-page>
   
   <base-page v-else>
     <h1>Fetching product...</h1>
   </base-page>
 </template>
-
-<style scoped>
-#product-container {
-  margin-top: 2rem;
-}
-</style>

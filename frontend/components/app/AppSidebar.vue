@@ -1,82 +1,42 @@
 <script setup lang="ts">
-import { useNavigationStore } from '~/stores/app';
-import { useSidebarStore } from '~/stores/app';
-import { useAuthStore } from '~/stores/auth';
-import type { ActionItem } from '~/components/base/BaseCard.vue';
+import { useNavigationStore, useSidebarStore } from "~/stores/app";
+import { useAuthStore } from "~/stores/auth";
 
 const auth = useAuthStore();
 const drawer = useSidebarStore();
 const navigation = useNavigationStore();
-
-function getOptionColor (option: ActionItem): string {
-	return option.color ? `text-${option.color}` : '';
-}
 </script>
 
 <template>
-  <v-dialog
-    v-model="drawer.visible"
-    fullscreen
+  <base-sidebar
+    id="app-sidebar"
+    :visible="drawer.visible"
+    @close="drawer.visible = false"
   >
-    <v-sheet>
-      <v-toolbar color="transparent">
-        <base-btn
-          size="large"
-          @click="drawer.visible = false"
-        >
-          <v-icon size="x-large">
-            mdi-close
-          </v-icon>
-        </base-btn>
-      </v-toolbar>
-
-      <v-row
-        class="mt-2"
-        justify="center"
+    <div class="flex flex-col h-4/5 gap-4 items-center place-content-center">
+      <div
+        v-for="option in navigation.options"
+        :key="option.label"
+        class="flex text-4xl font-semibold first:mt-0 my-2"
       >
-        <v-col
-          v-for="option in navigation.options"
-          :key="option.label"
-          cols="8"
+        <base-btn
+          class="grow"
+          color="bg-transparent"
+          :to="option.to"
+          @click="
+            option.action;
+            drawer.visible = false;
+          "
         >
-          <div :class="`sidebar-item ${getOptionColor(option)}`">
-            <v-icon
-              v-if="option.icon"
-              style="margin-right: 1rem"
-              :icon="option.icon"
-            />
-            <base-btn
-              text
-              :to="option.to"
-              :color="option.color"
-              @click="
-                option.action;
-                drawer.visible = false;
-              "
-            >
-              <h2 class="sidebar-items">
-                {{ option.label }}
-              </h2>
-            </base-btn>
-          </div>
-        </v-col>
+          {{ option.label }}
+        </base-btn>
+      </div>
 
-        <v-col
-          v-if="auth.isAuthenticated"
-          cols="8"
-        >
-          <app-admin-menu
-            v-if="auth.isAuthenticated"
-            class="sidebar-item"
-          />
-        </v-col>
-      </v-row>
-    </v-sheet>
-  </v-dialog>
+      <app-admin-menu
+        v-if="auth.isAuthenticated"
+        :sidebar="true"
+        class="text-4xl font-semibold"
+      />
+    </div>
+  </base-sidebar>
 </template>
-
-<style scoped>
-.sidebar-item {
-	font-size: x-large;
-}
-</style>

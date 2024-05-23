@@ -1,40 +1,43 @@
 <script setup lang="ts">
-import { useProductStore, useOrderStore } from '~/stores/shop';
+import { useProductStore, useOrderStore } from "~/stores/shop";
 
 const productStore = useProductStore();
 const orderStore = useOrderStore();
 
+onMounted(() => {
+	if (process.client) {
+		// close the cart sidebar when the checkout button is clicked
+		document.getElementById("checkout-btn")?.addEventListener("click", () => {
+			orderStore.showCart = false;
+		});
+	}
+});
 </script>
 
 <template>
-  <v-navigation-drawer
-    v-model="orderStore.showCart"
-    class="pa-2"
-    temporary
-    location="right"
-    width="400"
+  <base-sidebar
+    id="app-sidebar"
+    :visible="orderStore.showCart"
+    @close="orderStore.showCart = false"
   >
-    <template #prepend>
-      <h1 class="ma-1">
+    <div class="flex flex-col">
+      <h1 class="ma-1 text-2xl font-semibold">
         Cart
       </h1>
-    </template>
 
-    <order-items-card
-      :items="orderStore.cartItems"
-      :currency="productStore.currency"
-    />
-  
-    <template #append>
+      <order-items-card
+        :items="orderStore.cartItems"
+        :currency="productStore.currency"
+      />
+
       <base-btn
-        class="ma-1"
-        color="success"
-        size="large"
-        block
+        id="checkout-btn"
+        class="w-full ma-1 text-xl"
+        color="bg-success"
         to="/checkout"
       >
         Checkout
       </base-btn>
-    </template>
-  </v-navigation-drawer>
+    </div>
+  </base-sidebar>
 </template>

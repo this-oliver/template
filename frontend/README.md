@@ -8,7 +8,7 @@ The purpose of this project is to provide a template for Nuxt projects so that I
 
 - [x] Base Components (buttons, inputs, etc.)
 - [x] State Management with `pinia`
-- [x] Responsive UI Framework with `vuetify`
+- [x] Responsive UI Framework with `tailwindcss`
 - [x] User-friendly editor with `tiptap`
 - [x] Multi-language support with `vue-i18n` (See [locales/README.md](locales/README.md) for more info).
 
@@ -43,7 +43,7 @@ docker run -p 3000:3000 --env-file .env nuxt-template
 
 - Base Components (buttons, inputs, etc.)
 - State Management with `Pinia`
-- Responsive UI Framework with `Vuetify`
+- Responsive UI Framework with `tailwind`
 - Multi-language support with `vue-i18n`
   - [@nuxt/i18n](https://i18n.nuxtjs.org/)
   - `@intlify/unplugin-vue-i18n/vite` (optimizes purposes as explained in this [guide](https://vue-i18n.intlify.dev/guide/integrations/nuxt3.html#optimize-with-intlify-unplugin-vue-i18n))

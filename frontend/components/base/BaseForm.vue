@@ -35,9 +35,9 @@ const getActions = computed<ActionItem[]>(() => {
 </script>
 
 <template>
-  <div class="pa-2 flex flex-col gap-2">
+  <div class="pa-2 flex flex-col">
     <slot
-      id="card-header"
+      id="form-header"
       name="header"
     >
       <h3
@@ -51,10 +51,10 @@ const getActions = computed<ActionItem[]>(() => {
       </h4>
     </slot>
 
-    <slot />
+    <slot id="form-main" />
 
     <slot
-      id="card-action"
+      id="form-action"
       name="action"
     >
       <div class="flex justify-end gap-2">

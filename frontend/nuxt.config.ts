@@ -15,6 +15,7 @@ export default defineNuxtConfig({
    * Use styling globally in app
    */
 	css: [
+		'~/assets/styles/main.css',
 		'~/assets/styles/fonts.css'
 	],
 
@@ -34,7 +35,6 @@ export default defineNuxtConfig({
    * Adds modules to app
    */
 	modules: [
-		'@invictus.codes/nuxt-vuetify',
 		'@nuxtjs/eslint-module',
 		'@nuxtjs/i18n',
 		'@pinia/nuxt',
@@ -48,6 +48,13 @@ export default defineNuxtConfig({
 	runtimeConfig: {
 		secret: '',
 		public: { baseUrl: '' }
+	},
+
+	postcss: {
+		plugins: {
+			tailwindcss: {},
+			autoprefixer: {},
+		},
 	},
 
 	vite: { 

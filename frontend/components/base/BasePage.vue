@@ -1,29 +1,22 @@
 <script setup lang="ts">
-
 const props = defineProps({
 	title: {
 		type: String,
-		default: undefined
-	}
+		default: undefined,
+	},
 });
 </script>
 
 <template>
-  <v-row
-    justify="center"
-    class="pa-1"
-  >
-    <v-col
-      v-if="props.title"
-      class="text-center my-1"
-    >
-      <h1>{{ props.title }}</h1>
-    </v-col>
+  <div class="flex flex-col py-10 px-5">
+    <div v-if="props.title">
+      <h1 class="text-2xl font-bold">
+        {{ props.title }}
+      </h1>
+    </div>
 
-    <v-divider class="border-opacity-0" />
-
-    <v-col>
+    <div class="flex flex-col">
       <slot />
-    </v-col>
-  </v-row>
+    </div>
+  </div>
 </template>

@@ -1,95 +1,83 @@
 <script setup lang="ts">
-
-import type { PropType } from 'vue';
-
-type ButtonSize = 'small' | 'medium' | 'large'
-
 const props = defineProps({
+	to: {
+		type: String,
+		default: undefined,
+	},
+	href: {
+		type: String,
+		default: undefined,
+	},
+	target: {
+		type: String,
+		default: "_blank",
+	},
 	color: {
 		type: String,
-		default: undefined
+		default: "bg-primary text-white",
 	},
-	block: { 
-		type: Boolean, 
-		default: undefined 
+	disabled: {
+		type: Boolean,
+		default: undefined,
 	},
-	size: {
-		type: String as PropType<ButtonSize>,
-		default: undefined
-	},
-	flat: { 
-		type: Boolean, 
-		default: undefined 
-	},
-	outlined: { 
-		type: Boolean, 
-		default: undefined 
-	},
-	text: { 
-		type: Boolean, 
-		default: undefined 
-	},
-	plain: { 
-		type: Boolean, 
-		default: undefined 
-	},
-	tonal: { 
-		type: Boolean, 
-		default: undefined 
-	},
-	rounded: { 
-		type: String, 
-		default: undefined 
-	},
-	to: { 
-		type: String, 
-		default: undefined 
-	},
-	disabled: { 
-		type: Boolean, 
-		default: undefined 
-	},
-	hideFromTab: { 
-		type: Boolean, 
-		default: undefined 
+	text: {
+		type: Boolean,
+		default: false,
 	}
 });
 
-const emit = defineEmits([ 'click' ]);
+const emit = defineEmits(["click"]);
 
-type ButtonStyle = 'outlined' | 'tonal' | 'plain' | 'text' | 'flat'
-const getButtonStyle = computed<ButtonStyle | undefined>(() => {
-	if (props.outlined === true) {
-		return 'outlined';
-	} else if (props.text === true) {
-		return 'text';
-	} else if (props.plain === true) {
-		return 'plain';
-	} else if (props.tonal === true) {
-		return 'tonal';
-	} else {
-		return 'flat';
-	}
+const getClass = computed(() => {
+	const classes = [];
+
+	// disability
+	if (props.disabled) {
+		classes.push("disabled");
+		classes.push("cursor-not-allowed");
+	} 
+  
+	// add color
+	classes.push(props.color);
+
+	// add some padding
+	classes.push("py-1 px-2");
+
+	// add rounded corners
+	classes.push("rounded");
+
+	return classes.join(" ");
 });
-
-function handleClick() {
-	// emit click event
-	emit('click');
-}
 </script>
 
 <template>
-  <v-btn
-    :variant="getButtonStyle"
-    :color="props.color"
-    :size="props.size"
-    :block="props.block"
-    :rounded="props.rounded"
-    :disabled="props.disabled"
-    :to="props.to"
-    class="pa-2"
-    @click="handleClick()"
+  <nuxt-link
+    v-if="props.to"
+    :class="getClass"
+    :to="props.disabled ? undefined : props.to"
+    @click="emit('click')"
   >
     <slot />
-  </v-btn>
+  </nuxt-link>
+
+  <nuxt-link
+    v-else-if="props.href"
+    :class="getClass"
+    :disabled="props.disabled"
+    :href="props.href"
+    :target="props.target"
+    @click="emit('click')"
+  >
+    <slot />
+  </nuxt-link>
+
+  <button
+    v-else
+    :class="getClass"
+    :disabled="props.disabled"
+    :href="props.to"
+    @click="emit('click')"
+  >
+    <slot />
+  </button>
 </template>

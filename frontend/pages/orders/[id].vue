@@ -18,25 +18,19 @@ onMounted(async () => {
 
 <template>
   <base-page title="Order">
-    <v-row v-if="order">
-      <v-col
-        cols="12"
-        md="5"
-      >
-        <base-card
-          :title="order.customer.email"
-          :subtitle="`Order: ${order._id}`"
-        />
-      </v-col>
-      <v-col
-        cols="12"
-        md="6"
-      >
-        <order-items-card
-          :items="order.items"
-          :currency="order.currency"
-        />
-      </v-col>
-    </v-row>
+    <div
+      v-if="order"
+      class="flex flex-col gap-4"
+    >
+      <base-card
+        :title="order.customer.email"
+        :subtitle="`Order: ${order._id}`"
+      />
+
+      <order-items-card
+        :items="order.items"
+        :currency="order.currency"
+      />
+    </div>
   </base-page>
 </template>

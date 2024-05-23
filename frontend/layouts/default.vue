@@ -1,34 +1,15 @@
 <template>
-  <v-app>
-    <!-- navigation -->
-    <app-nav />
-    <app-sidebar />
-    <cart-sidebar-card />
+  <div class="min-h-svh flex flex-col">
+    <app-nav class="mt-1" />
+    <app-sidebar class="z-50" />
+    <cart-sidebar-card class="z-50" />
 
-    <!-- main content -->
-    <v-main id="main-container">
-      <v-container>
-        <v-row justify="center">
-          <v-col
-            cols="11"
-            md="10"
-          >
-            <slot />
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-main>
+    <main class="grow mx-auto pa-3 w-11/12 md:w-vw-70">
+      <slot />
+    </main>
 
-    <!-- footer -->
-    <app-footer />
-
+    <app-footer class="mx-auto w-full" />
     <!-- notification -->
     <Toaster />
-  </v-app>
+  </div>
 </template>
-
-<style scoped>
-#main-container{
-  min-height: 90vh;
-}
-</style>

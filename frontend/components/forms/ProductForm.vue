@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useProductStore } from '~/stores/shop';
-import type { Product, NewImage } from '~/types';
-import type { ActionItem } from '~/components/base/BaseCard.vue';
+import type { Product, NewImage, ActionItem } from '~/types';
 
 const props = defineProps({
 	product: {
@@ -46,7 +45,7 @@ const options = computed<ActionItem[]>(() => {
 			{
 				label: 'Update',
 				disabled: !validForm.value,
-				color: validForm.value ? 'success' : undefined,
+				color: validForm.value ? 'bg-success' : undefined,
 				action: async () => {
 					try {
 						const product: Product = await productStore.updateProduct(props.product!._id, form, newImages.value);
@@ -58,7 +57,7 @@ const options = computed<ActionItem[]>(() => {
 			},
 			{
 				label: 'Delete',
-				color: 'error',
+				color: 'bg-error',
 				action: async () => {
 					try {
 						const product: Product = await productStore.deleteProduct(props.product!._id);
@@ -73,7 +72,7 @@ const options = computed<ActionItem[]>(() => {
 			{
 				label: 'Create',
 				disabled: !validForm.value,
-				color: validForm.value ? 'success' : undefined,
+				color: validForm.value ? 'bg-success' : undefined,
 				action: async () => {
 					try {
 						const product: Product = await productStore.createProduct(form, newImages.value);
@@ -88,69 +87,52 @@ const options = computed<ActionItem[]>(() => {
 </script>
 
 <template>
-  <base-card :actions="options">
-    <v-row>
-      <v-col cols="12">
+  <base-form :actions="options">
+    <div class="flex flex-col md:grid md:grid-cols-2 md:gap-2">
+      <input-text
+        v-model="form.name"
+        label="Name"
+      />
+
+      <input-text
+        v-model="form.description"
+        label="Description"
+      />
+    
+      <input-text
+        v-model="form.price"
+        label="Price"
+      />
+    
+      <input-text
+        v-model="form.quantity"
+        label="Quantity"
+      />
+
+      <div class="md:col-span-2 flex flex-col gap-2">
         <input-text
-          v-model="form.name"
-          label="Name"
-        />
-      </v-col>
-      <v-col cols="12">
-        <input-text
-          v-model="form.description"
-          label="Description"
-        />
-      </v-col>
-      <v-col
-        cols="12"
-        md="6"
-      >
-        <input-text
-          v-model="form.price"
-          label="Price"
-        />
-      </v-col>
-      <v-col
-        cols="12"
-        md="6"
-      >
-        <input-text
-          v-model="form.quantity"
-          label="Quantity"
-        />
-      </v-col>
-      <v-col cols="12">
-        <input-file
           label="Images"
-          multiple
+          type="file"
+          :multiple="true"
           @input="(files: File[]) => newImages = convertFilesToImages(files)"
         />
-      </v-col>
-      <v-col
-        v-for="image in newImages"
-        :key="image.src"
-        cols="12"
-        md="4"
-      >
+
         <product-image-card
+          v-for="image in newImages"
+          :key="image.src"
           :src="image.src"
           :alt="image.alt"
           @delete="form.images.splice(form.images.indexOf(image), 1)"
         />
-      </v-col>
-      <v-col
-        v-for="image in form.images"
-        :key="image.src"
-        cols="12"
-        md="4"
-      >
+
         <product-image-card
+          v-for="image in form.images"
+          :key="image.src"
           :src="image.src"
           :alt="image.alt"
           @delete="form.images.splice(form.images.indexOf(image), 1)"
         />
-      </v-col>
-    </v-row>
-  </base-card>
+      </div>
+    </div>
+  </base-form>
 </template>

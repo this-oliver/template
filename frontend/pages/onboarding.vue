@@ -43,7 +43,6 @@ onMounted(() => {
   <base-page>
     <base-btn
       id="start-btn"
-      size="large"
       :to="prompt.path"
     >
       {{ prompt.message }}

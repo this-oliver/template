@@ -1,45 +1,36 @@
 <script setup lang="ts">
-import { useDisplay } from 'vuetify';
-import { useNavigationStore, useSidebarStore } from '~/stores/app';
-import { useAuthStore } from '~/stores/auth';
-import { useOrderStore } from '~/stores/shop';
-import type { ActionItem } from '~/components/base/BaseCard.vue';
+import { useNavigationStore, useSidebarStore } from "~/stores/app";
+import { useAuthStore } from "~/stores/auth";
+import { useOrderStore } from "~/stores/shop";
 
-const { smAndDown } = useDisplay();
 const auth = useAuthStore();
 const drawer = useSidebarStore();
 const navigation = useNavigationStore();
 const order = useOrderStore();
-
-const options = computed<ActionItem[]>(() => smAndDown.value ? [] : navigation.options);
 </script>
 
 <template>
-  <v-app-bar
-    id="app-nav"
-    app
-    flat
-    color="transparent"
-  >
-    <v-app-bar-nav-icon
-      v-if="smAndDown"
+  <div class="flex flex-row gap-10 md:gap-0 md:mx-20 text-lg">
+    <base-btn
+      class="flex place-items-center text-3xl mr-10 lg:hidden"
+      color="bg-transparent"
       @click="drawer.toggle"
-    />
+    >
+      <span class="i-mdi-menu" />
+    </base-btn>
 
     <router-link
-      class="plain"
+      class="grow md:grow-0 self-center justify-center md:mr-auto"
       to="/"
     >
       <app-logo />
     </router-link>
 
-    <v-spacer />
-
     <base-btn
-      v-for="option in options"
+      v-for="option in navigation.options"
       :key="option.label"
-      class="mx-1 plain"
-      :color="option.color"
+      :class="`mr-4 place-content-end hidden lg:block hover:underline`"
+      color="bg-transparent"
       :to="option.to"
       @click="option.action"
     >
@@ -48,21 +39,12 @@ const options = computed<ActionItem[]>(() => smAndDown.value ? [] : navigation.o
 
     <cart-btn
       v-if="order.totalCartItems > 0"
-      :compact="smAndDown"
-      class="mx-1"
+      class="mr-2 hidden lg:block"
     />
 
     <app-admin-menu
-      v-if="!smAndDown && auth.isAuthenticated"
-      class="mx-1"
+      v-if="auth.isAuthenticated"
+      class="mr-2 hidden lg:block"
     />
-  </v-app-bar>
+  </div>
 </template>
-
-<style scoped>
-@media (min-width: 600px) {
-	#app-nav {
-		padding: 0 2rem;
-	}
-}
-</style>
