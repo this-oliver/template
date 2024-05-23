@@ -1,13 +1,8 @@
-import { resolve, dirname } from 'node:path'; 
-import { fileURLToPath } from 'url'; 
-import VueI18nVitePlugin from '@intlify/unplugin-vue-i18n/vite'; 
-
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
 	build: {
 		transpile: [
-			'vue-sonner',
-			'vue-i18n'
+			'vue-sonner'
 		]
 	},
 	
@@ -36,7 +31,6 @@ export default defineNuxtConfig({
    */
 	modules: [
 		'@nuxtjs/eslint-module',
-		'@nuxtjs/i18n',
 		'@pinia/nuxt',
 	],
 
@@ -55,15 +49,5 @@ export default defineNuxtConfig({
 			tailwindcss: {},
 			autoprefixer: {},
 		},
-	},
-
-	vite: { 
-		plugins: [ 
-			VueI18nVitePlugin({ 
-				include: [ 
-					resolve(dirname(fileURLToPath(import.meta.url)), './locales/*.json') 
-				] 
-			}) 
-		] 
-	} 
+	}
 });

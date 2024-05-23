@@ -24,11 +24,6 @@ const features: ActionItem[] = [
 		to: "/features/form",
 	},
 	{
-		label: "Localization",
-		hint: "Support mutliple languages",
-		to: "/features/localize",
-	},
-	{
 		label: "Notifications",
 		hint: "Trigger notifications",
 		action: () => notify("Hello", "This is a notification"),
