@@ -15,8 +15,8 @@ export default defineNuxtConfig({
    * Use styling globally in app
    */
 	css: [
-		'~/assets/styles/main.css',
-		'~/assets/styles/fonts.css'
+		'~/assets/styles/base.css',
+		'~/assets/styles/custom.css'
 	],
 
 	/**

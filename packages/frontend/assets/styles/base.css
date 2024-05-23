@@ -5,8 +5,3 @@
 body {
   @apply bg-background text-slate-800;
 }
-
-.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
