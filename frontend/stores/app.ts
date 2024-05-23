@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { useAuthStore } from '~/stores/auth';
-import type { ActionItem } from '~/components/base/BaseCard.vue';
+import type { ActionItem } from '~/types';
 
 const useNavigationStore = defineStore('navigation', () => {
 	const authStore = useAuthStore();
@@ -16,7 +16,6 @@ const useNavigationStore = defineStore('navigation', () => {
 		const protectedRoutes: ActionItem[] = [
 			{
 				label: 'orders',
-				color: 'secondary',
 				to: '/orders',
 			}
 		];

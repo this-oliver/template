@@ -8,40 +8,21 @@ function goToDashboard() {
 </script>
 
 <template>
-  <BasePage>
-    <v-sheet>
-      <v-row justify="center">
-        <v-col
-          class="pa-1"
-          cols="auto"
+  <base-page title="Login">
+    <div class="flex flex-col gap-4">
+      <AuthForm
+        mode="login"
+        @authenticated="goToDashboard()"
+      />
+
+      <p>
+        Don't have an account? Register <nuxt-link
+          class="font-bold hover:underline"
+          to="/auth/register"
         >
-          <h2>Login</h2>
-        </v-col>
-
-        <v-divider class="border-opacity-0" />
-
-        <v-col
-          class="pa-1"
-          cols="10"
-          md="7"
-        >
-          <AuthForm
-            mode="login"
-            @authenticated="goToDashboard()"
-          />
-        </v-col>
-
-        <v-divider class="border-opacity-0" />
-
-        <v-col
-          class="pa-1"
-          cols="auto"
-        >
-          Don't have an account? Register <NuxtLink to="/auth/register">
-            here
-          </NuxtLink>.
-        </v-col>
-      </v-row>
-    </v-sheet>
-  </BasePage>
+          here
+        </nuxt-link>.
+      </p>
+    </div>
+  </base-page>
 </template>

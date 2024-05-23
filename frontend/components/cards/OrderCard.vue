@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useOrderStore } from '~/stores/shop';
-import type { Order, OrderStatus } from '~/types';
+import type { Order, OrderStatus, DropDownItem } from '~/types';
 
 const props = defineProps({
 	order: {
@@ -28,13 +28,17 @@ const paymentPending = computed<boolean>(() => {
 	return props.order.status === 'pending' && props.order.payment?.url !== undefined;
 });
 
-type statusOption = {value: OrderStatus};
-const statusOptions = computed<statusOption[]>(() => {
-	return [
-		{ value: 'shipped' },
-		{ value: 'completed' },
-		{ value: 'cancelled' }
-	];
+const statusOptions = computed<DropDownItem[]>(() => {
+	const options: OrderStatus[] = ["shipped", "completed", "cancelled"];
+
+	return options.map(option => {
+		return {
+			label: option,
+			color: getStatusColor(option),
+			disabled: !isStatusAvailable(option),
+			action: () => updateStatus(option)
+		} as DropDownItem;
+	});
 });
 
 function isStatusAvailable(status: OrderStatus) {
@@ -56,17 +60,17 @@ function isOrderComplete(status: OrderStatus): boolean {
 function getStatusColor(status: OrderStatus) {
 	switch(status) {
 	case 'pending':
-		return 'warning';
+		return 'bg-warning';
 	case 'paid':
-		return 'success';
+		return 'bg-success';
 	case 'shipped':
-		return 'info';
+		return 'bg-blue-400';
 	case 'completed':
-		return 'primary';
+		return 'bg-success';
 	case 'cancelled':
-		return 'error';
+		return 'bg-error';
 	default:
-		return 'grey';
+		return 'bg-slate-600';
 	}
 }
 
@@ -85,90 +89,57 @@ async function updateStatus(status: OrderStatus) {
 </script>
 
 <template>
-  <base-card>
-    <v-card-title class="container">
-      <div>{{ props.order.customer.email }}</div>
-      <v-chip
-        size="small"
-        :color="getStatusColor(props.order.status)"
-      >
-        {{ props.order.status }}
-      </v-chip>
-    </v-card-title>
-    <v-card-subtitle>
-      {{ total }}
-    </v-card-subtitle>
+  <base-card class="p-2 outline outline-1">
+    <template #header>
+      <div class="flex flex-col">
+        <div class="flex justify-between">
+          <h3 class="text-lg font-semibold">
+            {{ props.order.customer.email }}
+          </h3>
+          <span :class="`p-1 text-sm text-center rounded ${getStatusColor(props.order.status)}`">{{ props.order.status }}</span>
+        </div>
 
-    <v-card-text v-if="expand">
-      <order-items-card
-        class="mt-2"
-        :items="props.order.items"
-        :currency="props.order.currency"
-      />
-    </v-card-text>
+        <div class="flex justify-between">
+          <h4>ID {{ props.order._id }}</h4>
+          <h4>{{ total }}</h4>
+        </div>
+      </div>
+    </template>
 
-    <v-card-actions>
-      <base-btn
-        class="mx-1"
-        outlined
-        size="small"
-        @click="expand = !expand"
-      >
-        Toggle Details
-      </base-btn>
+    <order-items-card
+      v-if="expand"
+      class="mt-2"
+      :items="props.order.items"
+      :currency="props.order.currency"
+    />
 
-      <v-spacer />
+    <template #action>
+      <div class="flex gap-2">
+        <base-btn
+          class="text-sm"
+          color="bg-slate-200"
+          @click="expand = !expand"
+        >
+          Details
+        </base-btn>
 
-      <base-btn
-        v-if="paymentPending"
-        class="mx-1"
-        color="success"
-        size="small"
-        :href="props.order.payment?.url"
-      >
-        Pay Now
-      </base-btn>
-      
-      <base-btn
-        v-if="props.admin"
-        class="mx-1"
-        color="secondary"
-        size="small"
-        :disabled="isOrderComplete(props.order.status)"
-      >
-        Update Status
+        <base-dropdown
+          v-if="props.admin"
+          :disabled="isOrderComplete(props.order.status)"
+          :items="statusOptions"
+        >
+          Update Status
+        </base-dropdown>
 
-        <v-menu activator="parent">
-          <v-list>
-            <v-list-item
-              v-for="option in statusOptions"
-              :key="option.value"
-              :color="!isStatusAvailable(option.value) ? 'grey lighten-2' : getStatusColor(option.value)"
-              :disabled="!isStatusAvailable(option.value) || loading"
-              active
-              @click="updateStatus(option.value)"
-            >
-              <v-list-item-title>
-                <!-- strike through if status is current -->
-                <span v-if="isStatusAvailable(option.value)">
-                  {{ option.value }}
-                </span>
-                <span v-else>
-                  <s>{{ option.value }}</s>
-                </span>
-              </v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </base-btn>
-    </v-card-actions>
+        <base-btn
+          v-if="paymentPending"
+          class="text-sm"
+          color="bg-success"
+          :href="props.order.payment?.url"
+        >
+          Pay Now
+        </base-btn>
+      </div>
+    </template>
   </base-card>
 </template>
-
-<style scoped>
-.container {
-  /* add space between divs */
-  display: flex;
-  justify-content: space-between;
-}
-</style>

@@ -5,14 +5,13 @@
     "dev": "nuxt dev --dotenv .env.local",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare && simple-git-hooks",
+    "postinstall": "nuxt prepare",
     "lint": "eslint --ext .ts,.vue --ignore-path .gitignore .",
     "lint:fix": "eslint --ext .ts,.vue --ignore-path .gitignore --fix .",
     "docker:build": "docker build -t template-nuxt .",
     "docker:run": "docker run -p 3000:3000 --env-file .env template-nuxt"
   },
   "dependencies": {
-    "@mdi/font": "^7.2.96",
     "@pinia/nuxt": "^0.5.1",
     "@tiptap/extension-placeholder": "^2.1.12",
     "@tiptap/pm": "^2.1.12",
@@ -23,28 +22,25 @@
     "vue-sonner": "^1.0.2"
   },
   "devDependencies": {
+    "@egoist/tailwindcss-icons": "^1.8.0",
+    "@iconify-json/mdi": "^1.1.66",
     "@intlify/unplugin-vue-i18n": "^1.5.0",
-    "@invictus.codes/nuxt-vuetify": "^0.2.20",
     "@nuxtjs/eslint-module": "^4.1.0",
     "@nuxtjs/i18n": "8.0.0-rc.5",
     "@types/node": "^18",
     "@typescript-eslint/eslint-plugin": "^6.14.0",
     "@typescript-eslint/parser": "^6.14.0",
+    "autoprefixer": "^10.4.19",
+    "daisyui": "^4.11.1",
     "eslint": "^8.55.0",
     "eslint-plugin-vue": "^9.19.2",
-    "fist-bump": "^2.3.2",
-    "lint-staged": "^15.2.0",
     "nuxt": "^3.7.4",
-    "simple-git-hooks": "^2.9.0",
+    "postcss": "^8.4.38",
+    "tailwind": "^4.0.0",
+    "tailwindcss": "^3.4.3",
     "typescript": "^5.3.3",
     "vue": "^3.3.8",
     "vue-eslint-parser": "^9.3.2",
     "vue-router": "^4.2.5"
-  },
-  "lint-staged": {
-    "*.ts": "pnpm lint:fix"
-  },
-  "simple-git-hooks": {
-    "pre-commit": "pnpm lint-staged"
   }
 }

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useShopStore } from '~/stores/shop';
-import type { Shop } from '~/types';
-import type { ActionItem } from '~/components/base/BaseCard.vue';
+import type { Shop, ActionItem } from '~/types';
 
 const props = defineProps({
 	shop: {
@@ -30,7 +29,7 @@ const options = computed<ActionItem[]>(() => {
 			{
 				label: 'Updated',
 				disabled: !validForm.value,
-				color: validForm.value ? 'success' : undefined,
+				color: validForm.value ? 'bg-success' : undefined,
 				action: async () => {
 					try {
 						const shop: Shop = await shopStore.updateShop(props.shop!._id, form);
@@ -45,7 +44,7 @@ const options = computed<ActionItem[]>(() => {
 			{
 				label: 'Create',
 				disabled: !validForm.value,
-				color: validForm.value ? 'success' : undefined,
+				color: validForm.value ? 'bg-success' : undefined,
 				action: async () => {
 					try {
 						const shop: Shop = await shopStore.createShop(form);
@@ -60,7 +59,7 @@ const options = computed<ActionItem[]>(() => {
 </script>
 
 <template>
-  <base-card
+  <base-form
     title="Shop Form"
     :actions="options"
   >
@@ -72,5 +71,5 @@ const options = computed<ActionItem[]>(() => {
       v-model="form.description"
       label="Description"
     />
-  </base-card>
+  </base-form>
 </template>

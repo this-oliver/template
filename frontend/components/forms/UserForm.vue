@@ -1,28 +1,31 @@
 <script setup lang="ts">
-import { useAuthStore } from '~/stores/auth';
-import type { User } from '~/types';
-import type { ActionItem } from '~/components/base/BaseCard.vue';
+import { useAuthStore } from "~/stores/auth";
+import type { User, ActionItem } from "~/types";
 
 const props = defineProps({
 	user: {
 		type: Object as PropType<User>,
-		required: true
-	}
+		required: true,
+	},
 });
 
-const emit = defineEmits(['updated']);
+const emit = defineEmits(["updated"]);
 
 const authStore = useAuthStore();
 const { notify } = useNotification();
 
 // user with password confirmation and without _id
-type UserForm = Omit<User, 'password' | '_id'> & { password: string; passwordConfirmation: string; oldPassword: string};
+type UserForm = Omit<User, "password" | "_id"> & {
+	password: string;
+	passwordConfirmation: string;
+	oldPassword: string;
+};
 
 const form = reactive<UserForm>({
-	username: props.user?.username || '',
-	password: '',
-	passwordConfirmation: '',
-	oldPassword: ''
+	username: props.user?.username || "",
+	password: "",
+	passwordConfirmation: "",
+	oldPassword: "",
 });
 
 const validForm = computed<boolean>(() => {
@@ -33,27 +36,28 @@ const validForm = computed<boolean>(() => {
 
 	return (
 		form.username.length > 0 &&
-    form.password.length > 0 &&
-    form.password === form.passwordConfirmation &&
-    form.oldPassword.length > 0
+		form.password.length > 0 &&
+		form.password === form.passwordConfirmation &&
+		form.oldPassword.length > 0
 	);
 });
 
 const options = computed<ActionItem[]>(() => {
 	return [
 		{
-			label: 'Update',
+			label: "Update",
 			disabled: !validForm.value,
-			color: validForm.value ? 'success' : undefined,
+			color: validForm.value ? "bg-success" : undefined,
+			hint: 'hint hint',
 			action: async () => {
 				try {
 					const user: User = await updateUser();
-					emit('updated', user);
+					emit("updated", user);
 				} catch (error) {
-					notify('User Error', (error as Error).message, 'error');
+					notify("User Error", (error as Error).message, "error");
 				}
-			}
-		}
+			},
+		},
 	];
 });
 
@@ -62,16 +66,19 @@ async function updateUser(): Promise<User> {
 
 	// update username if it has changed
 	if (form.username !== props.user.username) {
-		user = await authStore.updateUser(props.user._id, { username: form.username });
+		user = await authStore.updateUser(props.user._id, { username: form.username, });
 	}
 
 	// update password if it exists
 	else if (form.password.length > 0) {
-		user = await authStore.updateUserPassword(props.user._id, { oldPassword: form.oldPassword, newPassword: form.password });
+		user = await authStore.updateUserPassword(props.user._id, {
+			oldPassword: form.oldPassword,
+			newPassword: form.password,
+		});
 	}
 
-	if(!user) {
-		throw new Error('No changes were made');
+	if (!user) {
+		throw new Error("No changes were made");
 	}
 
 	return user;
@@ -79,25 +86,25 @@ async function updateUser(): Promise<User> {
 </script>
 
 <template>
-  <base-card :actions="options">
-    <InputText
+  <base-form :actions="options">
+    <input-text
       v-model="form.username"
       label="Username"
     />
-    <InputText
+    <input-text
       v-model="form.oldPassword"
       type="password"
       label="Old Password"
     />
-    <InputText
+    <input-text
       v-model="form.password"
       type="password"
       label="Password"
     />
-    <InputText
+    <input-text
       v-model="form.passwordConfirmation"
       type="password"
       label="Confirm password"
     />
-  </base-card>
+  </base-form>
 </template>

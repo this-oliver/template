@@ -1,37 +1,32 @@
 <script setup lang="ts">
-import { useAuthStore } from '~/stores/auth';
+import { useAuthStore } from "~/stores/auth";
+import type { DropDownItem } from "~/types";
 
 const authStore = useAuthStore();
+
+const options = computed<DropDownItem[]>(() => {
+	return [
+		{ label: "Profile", to: "/profile" },
+		{ label: "Shop", to: "/shop/edit" },
+		{
+			label: "Logout",
+			color: "text-red-500",
+			action: () => {
+				console.log("logout");
+				authStore.logout();
+			},
+		},
+	];
+});
 </script>
 
 <template>
-  <base-btn
-    id="admin-menu"
-    color="secondary"
-  >
-    {{ authStore.user ? authStore.user.username : "Admin" }}
-  </base-btn>
-
-  <v-menu
-    activator="#admin-menu"
-    open-on-hover
-  >
-    <v-list
-      variant="flat"
-      elevation="0"
+  <div class="dropdown dropdown-end">
+    <base-dropdown
+      color="bg-warning"
+      :items="options"
     >
-      <v-list-item to="/profile">
-        <v-list-item-title>Profile</v-list-item-title>
-      </v-list-item>
-      <v-list-item to="/shop/edit">
-        <v-list-item-title>Shop</v-list-item-title>
-      </v-list-item>
-      <v-list-item
-        class="text-error"
-        @click="authStore.logout()"
-      >
-        <v-list-item-title>Logout</v-list-item-title>
-      </v-list-item>
-    </v-list>
-  </v-menu>
+      {{ authStore.user ? authStore.user.username : "Admin" }}
+    </base-dropdown>
+  </div>
 </template>

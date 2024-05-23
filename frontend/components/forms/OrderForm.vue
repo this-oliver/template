@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useOrderStore, useProductStore } from '~/stores/shop';
-import type { Order, OrderItem } from '~/types';
-import type { ActionItem } from '~/components/base/BaseCard.vue';
+import type { Order, OrderItem, ActionItem } from '~/types';
 
 const props = defineProps({
 	items: {
@@ -41,7 +40,7 @@ const options = computed<ActionItem[]>(() => {
 		{
 			label: 'Create',
 			disabled: !validForm.value,
-			color: 'success',
+			color: 'bg-success',
 			action: async () => {
 				try {
 					// create url that will be used to redirect the user after payment
@@ -61,16 +60,18 @@ const options = computed<ActionItem[]>(() => {
 </script>
 
 <template>
-  <base-card :actions="options">
+  <base-form :actions="options">
     <input-text
       v-model="form.customer.email"
       label="Customer Email"
-      :is-valid="validEmail"
+      :valid="validEmail"
     />
 
-    <order-items-card
-      :items="form.items"
-      :currency="form.currency"
-    />
-  </base-card>
+    <div class="p-2">
+      <order-items-card
+        :items="form.items"
+        :currency="form.currency"
+      />
+    </div>
+  </base-form>
 </template>

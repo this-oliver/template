@@ -1,6 +1,5 @@
 import type { DefineComponent } from 'vue';
 import { defineComponent, h, shallowRef } from 'vue';
-import InfoCardVue from '~/components/cards/InfoCard.vue';
 
 export function useNotification () {
 	const { $toast } = useNuxtApp();
@@ -20,28 +19,24 @@ export function useNotification () {
 
 	function _mapTypeToColor (type: NotificationType): string {
 		switch (type) {
-		case 'general':
-			return 'info';
 		case 'warning':
-			return 'warning';
+			return 'bg-warning';
 		case 'error':
-			return 'error';
+			return 'bg-error';
 		case 'success':
-			return 'success';
+			return 'bg-success';
 		default:
-			return 'primary';
+			return 'bg-primary';
 		}
 	}
 
 	function _renderNotifictaion (title: string, message: string, type: NotificationType): Notification {
 		const component: DefineComponent = defineComponent({
 			setup () {
-				return () => h(InfoCardVue, {
-					message: `<b>${title}</b> <p>${message}</p>`,
-					color: _mapTypeToColor(type),
-					htmlIsh: true,
-					style: 'width: 350px;'
-				});
+				return () => h('div', { class: `${_mapTypeToColor(type)} w-fit p-2` }, [
+					h('h3', { class: 'text-lg font-semibold' }, title),
+					h('p', message)
+				]);
 			}
 		});
 

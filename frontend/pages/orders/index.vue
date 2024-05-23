@@ -20,18 +20,13 @@ onMounted(async () => {
 
 <template>
   <base-page title="Orders">
-    <v-row justify="center">
-      <v-col
+    <div class="flex flex-col gap-2">
+      <order-card
         v-for="order in orders"
         :key="order._id"
-        cols="12"
-        md="8"
-      >
-        <order-card
-          :order="order"
-          :admin="true"
-        />
-      </v-col>
-    </v-row>
+        :order="order"
+        :admin="true"
+      />
+    </div>
   </base-page>
 </template>

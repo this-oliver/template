@@ -25,35 +25,29 @@ function getThumbnail(product: Product): Image {
 
 <template>
   <base-card>
-    <v-list density="compact">
-      <v-list-item
+    <div class="flex flex-col gap-2">
+      <div
         v-for="item in props.items"
         :key="item.product._id"
-        :prepend-avatar="getThumbnail(item.product).src"
+        class="flex justify-between"
       >
-        <div class="list-item-layout">
-          <div>{{ item.product.name }}</div>
-          <div>{{ `${item.quantity} x ${item.product.price} ${props.currency}` }}</div>
-        </div>
-      </v-list-item>
+        <base-image
+          :src="getThumbnail(item.product).src"
+          :alt="getThumbnail(item.product).alt"
+          width="100px"
+          height="auto"
+        />
 
-      <v-divider class="mt-2" />
+        <div>{{ item.product.name }}</div>
+        <div>{{ `${item.quantity} x ${item.product.price} ${props.currency}` }}</div>
+      </div>
 
-      <v-list-item class="mt-2">
-        <div class="list-item-layout">
-          <div>Total</div>
-          <div style="font-weight: bold;">
-            {{ orderTotal }} {{ props.currency }}
-          </div>
+      <div class="flex justify-end gap-2">
+        <div>Total</div>
+        <div class="font-semibold">
+          {{ orderTotal }} {{ props.currency }}
         </div>
-      </v-list-item>
-    </v-list>
+      </div>
+    </div>
   </base-card>
 </template>
-
-<style scoped>
-.list-item-layout {
-  display: flex; /* Ensures flexbox is used */
-  justify-content: space-between; /* Aligns children at each end */
-}
-</style>
