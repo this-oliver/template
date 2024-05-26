@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: template-server
+  name: template-backend
   labels:
     app: template
-    component: server
+    component: backend
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: template
-      component: server
+      component: backend
   template:
     metadata:
       labels:
         app: template
-        component: server
+        component: backend
     spec:
       containers:
-        - name: server
-          image: thisoliver/template:server
+        - name: backend
+          image: thisoliver/template:backend
           imagePullPolicy: Always
           env:
             - name: BUCKET_NAME
@@ -74,11 +74,11 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: template
-                  key: CLIENT_ORIGIN
+                  key: FRONTEND_ORIGIN
 
           ports:
             - containerPort: 5000
-              name: server-port
+              name: backend-port
           resources:
             limits:
               memory: "256Mi"
@@ -88,35 +88,35 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: template-client
+  name: template-frontend
   labels:
     app: template
-    component: client
+    component: frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: template
-      component: client
+      component: frontend
   template:
     metadata:
       labels:
         app: template
-        component: client
+        component: frontend
     spec:
       containers:
-        - name: client
-          image: thisoliver/template:client
+        - name: frontend
+          image: thisoliver/template:frontend
           imagePullPolicy: Always
           env:
             - name: NUXT_PUBLIC_BASE_URL
               valueFrom:
                 configMapKeyRef:
                   name: template
-                  key: SERVER_ORIGIN
+                  key: BACKEND_ORIGIN
           ports:
             - containerPort: 3000
-              name: client-port
+              name: frontend-port
           resources:
             limits:
               memory: "256Mi"

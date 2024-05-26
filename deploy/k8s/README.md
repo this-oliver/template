@@ -43,7 +43,7 @@ There are many ways (`kubectl edit`, `kubectl patch`) to update the secret value
 kubectl create secret generic template --from-env-file=.env --dry-run=client -o yaml | kubectl apply -f -
 
 # Restart the relevant deployments to pick up the new secret values
-kubectl rollout restart deployment/template-server
+kubectl rollout restart deployment/template-backend
 ```
 
 If you don't have a `.env` file, you can create the secret manually:
@@ -56,7 +56,7 @@ kubectl create secret generic template --from-literal=DB_URI=your-database-passw
 kubectl apply -f secret.yaml
 
 # restart the relevant deployments to pick up the new secret values
-kubectl rollout restart deployment/template-server
+kubectl rollout restart deployment/template-backend
 
 # delete the secret.yaml file
 rm secret.yaml

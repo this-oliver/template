@@ -4,5 +4,5 @@ metadata:
   name: template
 
 data:
-  SERVER_ORIGIN: "https://template-api.oliverrr.net/api"
-  CLIENT_ORIGIN: "https://template.oliverrr.net"
+  BACKEND_ORIGIN: "https://template-api.oliverrr.net/api"
+  FRONTEND_ORIGIN: "https://template.oliverrr.net"

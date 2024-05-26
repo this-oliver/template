@@ -21,7 +21,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: template-client
+                name: template-frontend
                 port:
                   number: 80
     - host: template-api.oliverrr.net
@@ -31,7 +31,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: template-server
+                name: template-backend
                 port:
                   number: 5000
   tls:

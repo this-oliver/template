@@ -3,4 +3,4 @@ kind: ConfigMap
 metadata:
   name: template
 data:
-  SERVER_ORIGIN: "http://template-server:4000"
+  BACKEND_ORIGIN: "http://template-backend:4000"
