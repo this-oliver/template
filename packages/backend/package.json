@@ -15,9 +15,9 @@
     "test": "NODE_ENV=test mocha",
     "lint": "eslint . --ignore-path .gitignore --ext .ts",
     "lint:fix": "eslint . --ignore-path .gitignore --ext .ts --fix",
-    "postinstall": "simple-git-hooks",
-    "docker:build": "docker build -t template-backend:latest .",
-    "docker:run": "docker run -p 3000:3000 --env-file .env  template-backend:latest"
+    "docker:build": "docker build -t template:backend .",
+    "docker:run": "docker run -p 5000:5000 --env-file .env  template:backend",
+    "postinstall": "simple-git-hooks"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.504.0",

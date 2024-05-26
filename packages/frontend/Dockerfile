@@ -14,7 +14,7 @@ ARG PNPM_VERSION=8.9.2
 RUN npm install -g pnpm@${PNPM_VERSION}
 
 # install dependencies
-RUN pnpm install --shamefully-hoist --frozen-lockfile
+RUN pnpm install --frozen-lockfile --shamefully-hoist
 
 # copy source code (see .dockerignore for ignored files)
 COPY . .
