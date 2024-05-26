@@ -1,0 +1,123 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: template-server
+  labels:
+    app: template
+    component: server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: template
+      component: server
+  template:
+    metadata:
+      labels:
+        app: template
+        component: server
+    spec:
+      containers:
+        - name: server
+          image: thisoliver/template:server
+          imagePullPolicy: Always
+          env:
+            - name: BUCKET_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: template
+                  key: BUCKET_NAME
+
+            - name: BUCKET_S3_REGION
+              valueFrom:
+                secretKeyRef:
+                  name: template
+                  key: BUCKET_S3_REGION
+
+            - name: BUCKET_S3_URI
+              valueFrom:
+                secretKeyRef:
+                  name: template
+                  key: BUCKET_S3_URI
+
+            - name: BUCKET_S3_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: template
+                  key: BUCKET_S3_KEY
+
+            - name: BUCKET_S3_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: template
+                  key: BUCKET_S3_SECRET
+
+            - name: DB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: template
+                  key: DB_URI
+
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: template
+                  key: JWT_SECRET
+
+            - name: ADMIN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: template
+                  key: ADMIN_SECRET
+
+            - name: ALLOWED_ORIGINS
+              valueFrom:
+                configMapKeyRef:
+                  name: template
+                  key: CLIENT_ORIGIN
+
+          ports:
+            - containerPort: 5000
+              name: server-port
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "0.5"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: template-client
+  labels:
+    app: template
+    component: client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: template
+      component: client
+  template:
+    metadata:
+      labels:
+        app: template
+        component: client
+    spec:
+      containers:
+        - name: client
+          image: thisoliver/template:client
+          imagePullPolicy: Always
+          env:
+            - name: NUXT_PUBLIC_BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: template
+                  key: SERVER_ORIGIN
+          ports:
+            - containerPort: 3000
+              name: client-port
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "0.5"

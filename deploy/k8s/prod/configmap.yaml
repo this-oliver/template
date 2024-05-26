@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: template
+
+data:
+  SERVER_ORIGIN: "https://template-api.oliverrr.net/api"
+  CLIENT_ORIGIN: "https://template.oliverrr.net"
